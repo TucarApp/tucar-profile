@@ -15,12 +15,11 @@ import { useRouter } from 'next/router';
 import { buildAuthUri } from '@/helpers/buildUri';
 
 import { useSearchParams } from 'next/navigation';
-import Meta from '@/Layouts/Meta';
 
 
 const Cuenta = () => {
 
-
+    
 
     const [selectedSection, setSelectedSection] = useState('Account Info');
     const router = useRouter();
@@ -73,30 +72,30 @@ const Cuenta = () => {
             window.history.replaceState(null, '', '/profile');
         }
     }, [token, userData]);
-
+    
 
     useEffect(() => {
         const fetchTokenAndUserData = async () => {
             try {
                 const code = searchParams.get('code'); // Captura el parámetro "code"
                 const state = searchParams.get('state'); // Opcional: captura el parámetro "state"
-
+    
                 // Validar si el código existe
                 if (!code) {
                     setError('No se encontró el código en la URL');
                     return;
                 }
-
+    
                 // Paso 1: Obtener el token
                 const body = new URLSearchParams({
                     code,
                     client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
                     grant_type: 'authorization_code',
-                    redirect_uri: 'https://profile.tucar.dev/authenticate',
+                    redirect_uri: 'https://tucar-profile-1032838122231.us-central1.run.app/authenticate',
                     //dev
                     // redirect_uri: 'http://localhost:3000/authenticate',
                 });
-
+    
                 const tokenResponse = await fetch('https://account-service-twvszsnmba-uc.a.run.app/api/v1/oauth/token', {
                     method: 'POST',
                     headers: {
@@ -104,19 +103,19 @@ const Cuenta = () => {
                     },
                     body: body.toString(),
                 });
-
+    
                 if (tokenResponse.ok) {
                     const tokenData = await tokenResponse.json();
                     console.log('Token recibido:', tokenData.access_token); // Consola el token
                     setToken(tokenData.access_token); // Guardar el token en el estado
-
+    
                     // Paso 2: Obtener el userId con el token
                     const userIdResponse = await fetchUserId(tokenData.access_token);
-
+    
                     if (userIdResponse) {
                         console.log("UserId obtenido:", userIdResponse); // Consola el userId
                         setUserId(userIdResponse); // Guardar el userId en el estado
-
+    
                         // Paso 3: Obtener datos del usuario con el token y userId
                         await fetchUserData(tokenData.access_token);
                     }
@@ -130,10 +129,10 @@ const Cuenta = () => {
                 setError('Error de conexión. Inténtalo nuevamente.');
             }
         };
-
+    
         fetchTokenAndUserData();
     }, [searchParams]);
-
+    
     // Función para obtener el userId
     const fetchUserId = async (token) => {
         try {
@@ -144,7 +143,7 @@ const Cuenta = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-
+    
             if (response.ok) {
                 const data = await response.json();
                 console.log("Token Metadata Response:", data); // Consola la respuesta para ver el userId
@@ -159,7 +158,7 @@ const Cuenta = () => {
             return null;
         }
     };
-
+    
     // Función para obtener los datos del usuario
     const fetchUserData = async (token) => {
         try {
@@ -170,7 +169,7 @@ const Cuenta = () => {
                     Authorization: `Bearer ${token}`, // Pasar el token como Bearer
                 },
             });
-
+    
             if (response.ok) {
                 const userData = await response.json();
                 console.log('Datos del usuario recibidos:', userData); // Consola los datos
@@ -185,7 +184,7 @@ const Cuenta = () => {
             setError('Error al obtener datos del usuario. Inténtalo nuevamente.');
         }
     };
-
+    
 
     console.log(userData?.firstname, userData?.lastname)
     console.log(userData?.firstname, userData?.lastname, 'estooo')
@@ -194,7 +193,7 @@ const Cuenta = () => {
 
 
 
-
+    
 
     // const token = "AC.UFCZkWeUrBbOu0h2k5eiXBIA0KM6y-41o8iWbS5WlkhXoWZm6B5XQYK7v91r-_7GnLCEo8j7uQTE2kj9m2Gj47SBmHVeWZ11OkFFt_0uLAxEQzmMgLzkV5KSPBPiEhgC_TvgVjtxpLjnPP9qjMIY8EwI7g6sLdg3sq1S-A.SzqLHfbkwjsPRgT6Ej5FjMWV-1COAepHEqzuTNgtd3lOJbwIU4TdNRabYYaVAKawJhCbsKah0TUQI43c_WotAjtpdS4Yr7wLaJlsi8xub9bIjSC0UeXA8n0GX7RrwH4bTDTbQSGTkBRvaympxx58reTThZEHG9-ctPBHx0akAMzNGS47Pw0hVJSMu-4yVQDkZbhsoZU4ofcMErmOTocGkOhd4HlESmzurKYvt-4QaU5MFqFYv6ApX0bXRXneobBYuMBTjR3MjA2WxoENz4Icif2tX_Cnf6dehL4yJxB0vQ5Z4nUgiodQRpCOBwZYLe_EMScGKOb0yLXcKYuhI-cTUg"
 
@@ -256,7 +255,7 @@ const Cuenta = () => {
     //         console.error("Error:", error);
     //     }
     // };
-
+    
 
     // mare
 
@@ -273,7 +272,7 @@ const Cuenta = () => {
             });
             setAuthentications(userData.authentications || []);
             setAllowedApplications(userData.allowed_applications || []);
-
+            
         }
     }, [userData]);
 
@@ -575,325 +574,323 @@ const Cuenta = () => {
 
 
     return (
-        <Meta title='Profile'>
-            <div className='font-Poppins'>
-                {/* Barra superior */}
-                <div className="w-full bg-[#0057b8] h-16 flex items-center justify-between px-4 lg:px-6">
-                    <TucarLogo color="white" className="h-12" />
-                    <button className="text-white lg:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                        {isMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
-                    </button>
+        <div className='font-Poppins'>
+            {/* Barra superior */}
+            <div className="w-full bg-[#0057b8] h-16 flex items-center justify-between px-4 lg:px-6">
+                <TucarLogo color="white" className="h-12" />
+                <button className="text-white lg:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    {isMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+                </button>
+            </div>
+
+            <div className="flex">
+                {/* Menú lateral */}
+                <div className={`fixed lg:static top-0 left-0 w-3/4 max-w-xs bg-[white] h-full z-20 transition-transform transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:w-1/6 lg:h-screen lg:block`}>
+                    <ul className="text-[#333333] mt-6 lg:mt-5 p-5">
+                        <li
+                            className={`cursor-pointer mb-4 ${selectedSection === 'Account Info' ? 'font-bold' : ''}`}
+                            onClick={() => handleSectionChange('Account Info')}
+                        >
+                            Información de la cuenta
+                        </li>
+                        <li
+                            className={`cursor-pointer mb-4 ${selectedSection === 'Security' ? 'font-bold' : ''}`}
+                            onClick={() => handleSectionChange('Security')}
+                        >
+                            Seguridad
+                        </li>
+                        <li
+                            className={`cursor-pointer mb-4 ${selectedSection === 'Privacy & Data' ? 'font-bold' : ''}`}
+                            onClick={() => handleSectionChange('Privacy & Data')}
+                        >
+                            Política de privacidad y datos
+                        </li>
+                    </ul>
                 </div>
 
-                <div className="flex">
-                    {/* Menú lateral */}
-                    <div className={`fixed lg:static top-0 left-0 w-3/4 max-w-xs bg-[white] h-full z-20 transition-transform transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:w-1/6 lg:h-screen lg:block`}>
-                        <ul className="text-[#333333] mt-6 lg:mt-5 p-5">
-                            <li
-                                className={`cursor-pointer mb-4 ${selectedSection === 'Account Info' ? 'font-bold' : ''}`}
-                                onClick={() => handleSectionChange('Account Info')}
-                            >
-                                Información de la cuenta
-                            </li>
-                            <li
-                                className={`cursor-pointer mb-4 ${selectedSection === 'Security' ? 'font-bold' : ''}`}
-                                onClick={() => handleSectionChange('Security')}
-                            >
-                                Seguridad
-                            </li>
-                            <li
-                                className={`cursor-pointer mb-4 ${selectedSection === 'Privacy & Data' ? 'font-bold' : ''}`}
-                                onClick={() => handleSectionChange('Privacy & Data')}
-                            >
-                                Política de privacidad y datos
-                            </li>
-                        </ul>
-                    </div>
+                {/* Contenido */}
+                <div className="w-full lg:w-[55%] p-10 text-[#333333]">
+                    {selectedSection === 'Account Info' && (
+                        <div className="mx-auto">
+                            <h2 className="text-2xl font-bold mb-5">Información de la cuenta</h2>
 
-                    {/* Contenido */}
-                    <div className="w-full lg:w-[55%] p-10 text-[#333333]">
-                        {selectedSection === 'Account Info' && (
-                            <div className="mx-auto">
-                                <h2 className="text-2xl font-bold mb-5">Información de la cuenta</h2>
-
-                                {/* Campo de Nombre y Apellido */}
-                                <div className="mb-5 border-b border-gray-300 pb-3">
-                                    <p className="text-gray-700 font-bold">Nombre</p>
-                                    <div className="flex justify-between items-center">
-                                        {isEditingName ? (
-                                            <div className="flex flex-col w-full">
-                                                <InputField
-                                                    type="text"
-                                                    className="border border-gray-300 rounded p-2 w-full"
-                                                    value={name}
-                                                    onChange={(e) => setName(e.target.value)}
-                                                    placeholder="Nombre"
-                                                />
-                                                <div className="flex gap-2 mt-2 w-full max-w-[348px]">
-                                                    <AuthButton className="flex-1" onClick={() => cancelEdit('name')} variant="secondary">
-                                                        Cancelar
-                                                    </AuthButton>
-                                                    <AuthButton
-                                                        className="flex-1"
-                                                        onClick={() => updateUserCredential('firstname', name)}
-                                                    >
-                                                        Continuar
-                                                    </AuthButton>
-                                                </div>
+                            {/* Campo de Nombre y Apellido */}
+                            <div className="mb-5 border-b border-gray-300 pb-3">
+                                <p className="text-gray-700 font-bold">Nombre</p>
+                                <div className="flex justify-between items-center">
+                                    {isEditingName ? (
+                                        <div className="flex flex-col w-full">
+                                            <InputField
+                                                type="text"
+                                                className="border border-gray-300 rounded p-2 w-full"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                placeholder="Nombre"
+                                            />
+                                            <div className="flex gap-2 mt-2 w-full max-w-[348px]">
+                                                <AuthButton className="flex-1" onClick={() => cancelEdit('name')} variant="secondary">
+                                                    Cancelar
+                                                </AuthButton>
+                                                <AuthButton
+                                                    className="flex-1"
+                                                    onClick={() => updateUserCredential('firstname', name)}
+                                                >
+                                                    Continuar
+                                                </AuthButton>
                                             </div>
-                                        ) : (
-                                            <div className="flex justify-between w-full">
-                                                <p className="text-[16px]">{name}</p>
-                                                <button onClick={() => setIsEditingName(true)} className="text-blue-500">
-                                                    <PencilIcon className="h-5 w-5" />
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex justify-between w-full">
+                                            <p className="text-[16px]">{name}</p>
+                                            <button onClick={() => setIsEditingName(true)} className="text-blue-500">
+                                                <PencilIcon className="h-5 w-5" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
 
-                                    <p className="text-gray-700 font-bold mt-5">Apellido</p>
-                                    <div className="flex justify-between items-center">
-                                        {isEditingLastname ? (
-                                            <div className="flex flex-col w-full">
-                                                <InputField
-                                                    type="text"
-                                                    className="border border-gray-300 rounded p-2 w-full"
-                                                    value={lastname}
-                                                    onChange={(e) => setLastname(e.target.value)}
-                                                    placeholder="Apellido"
-                                                />
-                                                <div className="flex gap-2 mt-2 w-full max-w-[348px]">
-                                                    <AuthButton className="flex-1" onClick={() => cancelEdit('lastname')} variant="secondary">
-                                                        Cancelar
-                                                    </AuthButton>
-                                                    <AuthButton
-                                                        className="flex-1"
-                                                        onClick={() => updateUserCredential('lastname', lastname)}
-                                                    >
-                                                        Continuar
-                                                    </AuthButton>
-                                                </div>
+                                <p className="text-gray-700 font-bold mt-5">Apellido</p>
+                                <div className="flex justify-between items-center">
+                                    {isEditingLastname ? (
+                                        <div className="flex flex-col w-full">
+                                            <InputField
+                                                type="text"
+                                                className="border border-gray-300 rounded p-2 w-full"
+                                                value={lastname}
+                                                onChange={(e) => setLastname(e.target.value)}
+                                                placeholder="Apellido"
+                                            />
+                                            <div className="flex gap-2 mt-2 w-full max-w-[348px]">
+                                                <AuthButton className="flex-1" onClick={() => cancelEdit('lastname')} variant="secondary">
+                                                    Cancelar
+                                                </AuthButton>
+                                                <AuthButton
+                                                    className="flex-1"
+                                                    onClick={() => updateUserCredential('lastname', lastname)}
+                                                >
+                                                    Continuar
+                                                </AuthButton>
                                             </div>
-                                        ) : (
-                                            <div className="flex justify-between w-full">
-                                                <p className="text-[16px]">{lastname}</p>
-                                                <button onClick={() => setIsEditingLastname(true)} className="text-blue-500">
-                                                    <PencilIcon className="h-5 w-5" />
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-
-
+                                        </div>
+                                    ) : (
+                                        <div className="flex justify-between w-full">
+                                            <p className="text-[16px]">{lastname}</p>
+                                            <button onClick={() => setIsEditingLastname(true)} className="text-blue-500">
+                                                <PencilIcon className="h-5 w-5" />
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
 
 
+                            </div>
 
 
-                                {/* Campo de Teléfono */}
-                                <div className="mb-5 border-b border-gray-300 pb-3">
-                                    <p className="text-gray-700 font-bold">Número de teléfono</p>
-                                    <div className="flex justify-between items-center">
-                                        {isEditingPhone ? (
-                                            <div className="flex flex-col gap-2">
-                                                <InputField
-                                                    type="text"
-                                                    className="border border-gray-300 rounded p-2 w-full"
-                                                    value={phone}
-                                                    onChange={(e) => setPhone(e.target.value)}
-                                                />
-                                                {isCodeSent ? (
-                                                    <>
-                                                        <InputField
-                                                            type="text"
-                                                            className="border border-gray-300 rounded p-2 w-full"
-                                                            placeholder="Código de Verificación"
-                                                            value={verificationCode}
-                                                            onChange={(e) => setVerificationCode(e.target.value)}
-                                                        />
-                                                        <div className="flex gap-2 mt-2">
-                                                            <AuthButton onClick={() => cancelEdit('phone')} variant="secondary">Cancelar</AuthButton>
-                                                            <AuthButton onClick={handleConfirmVerificationCode}>Confirmar cambio</AuthButton>
-                                                        </div>
-                                                    </>
-                                                ) : (
+
+
+                            {/* Campo de Teléfono */}
+                            <div className="mb-5 border-b border-gray-300 pb-3">
+                                <p className="text-gray-700 font-bold">Número de teléfono</p>
+                                <div className="flex justify-between items-center">
+                                    {isEditingPhone ? (
+                                        <div className="flex flex-col gap-2">
+                                            <InputField
+                                                type="text"
+                                                className="border border-gray-300 rounded p-2 w-full"
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                            />
+                                            {isCodeSent ? (
+                                                <>
+                                                    <InputField
+                                                        type="text"
+                                                        className="border border-gray-300 rounded p-2 w-full"
+                                                        placeholder="Código de Verificación"
+                                                        value={verificationCode}
+                                                        onChange={(e) => setVerificationCode(e.target.value)}
+                                                    />
                                                     <div className="flex gap-2 mt-2">
                                                         <AuthButton onClick={() => cancelEdit('phone')} variant="secondary">Cancelar</AuthButton>
-                                                        <AuthButton onClick={handleSendVerificationCode}>Enviar Código</AuthButton>
+                                                        <AuthButton onClick={handleConfirmVerificationCode}>Confirmar cambio</AuthButton>
                                                     </div>
-                                                )}
-                                                {phoneError && <p className="text-red-500 text-sm mt-1 text-center font-Poppins font-light">{phoneError}</p>}
-                                            </div>
-                                        ) : (
-                                            <>
-                                                <p className="text-[16px]">{`${phoneCode} ${phone}`}</p>
-                                                <div className="flex items-center gap-1">
-                                                    {verifiedStatus.phone ? (
-                                                        <CheckCircleIcon className="h-5 w-5 text-green-500" title="Verificado" />
-                                                    ) : (
-                                                        <ExclamationCircleIcon className="h-5 w-5 text-red-500" title="Falta verificar" />
-                                                    )}
-                                                    <button onClick={() => setIsEditingPhone(true)} className="text-blue-500">
-                                                        <PencilIcon className="h-5 w-5" />
-                                                    </button>
+                                                </>
+                                            ) : (
+                                                <div className="flex gap-2 mt-2">
+                                                    <AuthButton onClick={() => cancelEdit('phone')} variant="secondary">Cancelar</AuthButton>
+                                                    <AuthButton onClick={handleSendVerificationCode}>Enviar Código</AuthButton>
                                                 </div>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-
-
-
-
-
-                                {/* Campo de Email */}
-                                <div className="mb-5 border-b border-gray-300 pb-3">
-                                    <p className="text-gray-700 font-bold">Email</p>
-                                    <div className="flex justify-between items-center">
-                                        {isEditingEmail ? (
-                                            <div className="flex flex-col gap-2">
-                                                <InputField
-                                                    type="email"
-                                                    className="border border-gray-300 rounded p-2 w-full"
-                                                    value={email}
-                                                    onChange={(e) => setEmail(e.target.value)}
-                                                />
-                                                {isCodeSent ? (
-                                                    <>
-                                                        <InputField
-                                                            type="text"
-                                                            className="border border-gray-300 rounded p-2 w-full"
-                                                            placeholder="Código de Verificación"
-                                                            value={verificationCode}
-                                                            onChange={(e) => setVerificationCode(e.target.value)}
-                                                        />
-                                                        <div className="flex gap-2 mt-2">
-                                                            <AuthButton onClick={() => cancelEdit('email')} variant="secondary">Cancelar</AuthButton>
-                                                            <AuthButton onClick={handleConfirmVerificationCodeForEmail}>Confirmar cambio</AuthButton>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <div className="flex gap-2 mt-2">
-                                                        <AuthButton onClick={() => cancelEdit('email')} variant="secondary">Cancelar</AuthButton>
-                                                        <AuthButton onClick={handleSendVerificationCodeForEmail}>Enviar Código</AuthButton>
-                                                    </div>
-                                                )}
-                                                {emailError && <p className="text-red-500 text-sm mt-1 font-Poppins font-light text-center">{emailError}</p>}
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center gap-1 w-full">
-                                                <p className="text-[16px] flex-1">{email}</p>
-                                                {verifiedStatus.email ? (
+                                            )}
+                                            {phoneError && <p className="text-red-500 text-sm mt-1 text-center font-Poppins font-light">{phoneError}</p>}
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <p className="text-[16px]">{`${phoneCode} ${phone}`}</p>
+                                            <div className="flex items-center gap-1">
+                                                {verifiedStatus.phone ? (
                                                     <CheckCircleIcon className="h-5 w-5 text-green-500" title="Verificado" />
                                                 ) : (
                                                     <ExclamationCircleIcon className="h-5 w-5 text-red-500" title="Falta verificar" />
                                                 )}
-                                                <button onClick={() => setIsEditingEmail(true)} className="text-blue-500">
+                                                <button onClick={() => setIsEditingPhone(true)} className="text-blue-500">
                                                     <PencilIcon className="h-5 w-5" />
                                                 </button>
                                             </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className='flex justify-end'>
-                                    <button
-                                        onClick={() => {
-                                            const isConfirmed = window.confirm("¿Estás seguro de que deseas bloquear la cuenta?");
-                                            if (isConfirmed) {
-                                                handleBlockAccount();
-                                            }
-                                        }}
-                                        className="bg-red-600 hover:bg-red-700 mt-5 font-Poppins text-white font-medium py-2 px-4 rounded shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-left"
-                                    >
-                                        Bloquear Cuenta
-                                    </button>
-                                </div>
-
-
-                            </div>
-                        )}
-
-                        {selectedSection === 'Security' && (
-
-
-
-                            <div>
-                                <div className="text-[#333333] mb-5 border-b border-gray-300 pb-3">
-                                    <h2 className="text-2xl font-bold mb-5">Cambiar Contraseña</h2>
-
-                                    {!isEditingPassword ? (
-                                        // Etapa inicial: Contraseña oculta y botón de edición
-                                        <div className="flex justify-between items-center mb-5">
-                                            <p className="text-[16px]">●●●●●●●●</p>
-                                            <button
-                                                onClick={() => router.push('/change-password')}
-                                                className="text-blue-500"
-                                            >
-                                                <PencilIcon className="h-5 w-5" />
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        // Resto del código de edición de contraseña
-                                        <>
-                                            {/* Código de edición de contraseña aquí */}
                                         </>
                                     )}
                                 </div>
-
-                                {/* Cuentas vinculadas */}
-                                <div className="mb-5 border-b border-gray-300 pb-3">
-                                    <p className="text-gray-700 font-bold">Cuentas vinculadas</p>
-                                    <div>
-                                        {authentications.map((auth, index) => (
-                                            auth.allowed && (
-                                                <div key={index} className="flex justify-between items-center">
-                                                    <p className="text-[16px] my-2">{auth.methodType}</p>
-                                                </div>
-                                            )
-                                        ))}
-                                    </div>
-                                </div>
                             </div>
 
 
-                        )}
 
 
 
-                        {selectedSection === 'Privacy & Data' && (
-                            <div>
-                                <div className="text-[#333333] border-b border-gray-300 pb-3">
-                                    <h2 className="text-2xl font-bold mb-5">Política de privacidad</h2>
-                                    {allowedApplications.map((app, index) => (
-                                        <div key={index} className="mb-4">
-                                            <p className="font-medium">{app.name}</p>
-                                            <p className="text-gray-700">{app.description}</p>
-
-                                            <ul className='list-disc mx-5 my-3 flex flex-col gap-y-[5px]'>
-                                                <li>  <a href={app.privacyPolicy} target="_blank" rel="noopener noreferrer" className="underline text-[#0057b8]">
-                                                    Política de Privacidad
-                                                </a>
-
-                                                </li>
-                                                <li>
-                                                    <a href={app.termsOfService} target="_blank" rel="noopener noreferrer" className="underline text-[#0057b8]">
-                                                        Términos de Servicio
-                                                    </a>
-                                                </li>
-                                            </ul>
+                            {/* Campo de Email */}
+                            <div className="mb-5 border-b border-gray-300 pb-3">
+                                <p className="text-gray-700 font-bold">Email</p>
+                                <div className="flex justify-between items-center">
+                                    {isEditingEmail ? (
+                                        <div className="flex flex-col gap-2">
+                                            <InputField
+                                                type="email"
+                                                className="border border-gray-300 rounded p-2 w-full"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                            />
+                                            {isCodeSent ? (
+                                                <>
+                                                    <InputField
+                                                        type="text"
+                                                        className="border border-gray-300 rounded p-2 w-full"
+                                                        placeholder="Código de Verificación"
+                                                        value={verificationCode}
+                                                        onChange={(e) => setVerificationCode(e.target.value)}
+                                                    />
+                                                    <div className="flex gap-2 mt-2">
+                                                        <AuthButton onClick={() => cancelEdit('email')} variant="secondary">Cancelar</AuthButton>
+                                                        <AuthButton onClick={handleConfirmVerificationCodeForEmail}>Confirmar cambio</AuthButton>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <div className="flex gap-2 mt-2">
+                                                    <AuthButton onClick={() => cancelEdit('email')} variant="secondary">Cancelar</AuthButton>
+                                                    <AuthButton onClick={handleSendVerificationCodeForEmail}>Enviar Código</AuthButton>
+                                                </div>
+                                            )}
+                                            {emailError && <p className="text-red-500 text-sm mt-1 font-Poppins font-light text-center">{emailError}</p>}
                                         </div>
+                                    ) : (
+                                        <div className="flex items-center gap-1 w-full">
+                                            <p className="text-[16px] flex-1">{email}</p>
+                                            {verifiedStatus.email ? (
+                                                <CheckCircleIcon className="h-5 w-5 text-green-500" title="Verificado" />
+                                            ) : (
+                                                <ExclamationCircleIcon className="h-5 w-5 text-red-500" title="Falta verificar" />
+                                            )}
+                                            <button onClick={() => setIsEditingEmail(true)} className="text-blue-500">
+                                                <PencilIcon className="h-5 w-5" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className='flex justify-end'>
+                                <button
+                                    onClick={() => {
+                                        const isConfirmed = window.confirm("¿Estás seguro de que deseas bloquear la cuenta?");
+                                        if (isConfirmed) {
+                                            handleBlockAccount();
+                                        }
+                                    }}
+                                    className="bg-red-600 hover:bg-red-700 mt-5 font-Poppins text-white font-medium py-2 px-4 rounded shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-left"
+                                >
+                                    Bloquear Cuenta
+                                </button>
+                            </div>
+
+
+                        </div>
+                    )}
+
+                    {selectedSection === 'Security' && (
+
+
+
+                        <div>
+                            <div className="text-[#333333] mb-5 border-b border-gray-300 pb-3">
+                                <h2 className="text-2xl font-bold mb-5">Cambiar Contraseña</h2>
+
+                                {!isEditingPassword ? (
+                                    // Etapa inicial: Contraseña oculta y botón de edición
+                                    <div className="flex justify-between items-center mb-5">
+                                        <p className="text-[16px]">●●●●●●●●</p>
+                                        <button
+                                            onClick={() => router.push('/change-password')}
+                                            className="text-blue-500"
+                                        >
+                                            <PencilIcon className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    // Resto del código de edición de contraseña
+                                    <>
+                                        {/* Código de edición de contraseña aquí */}
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Cuentas vinculadas */}
+                            <div className="mb-5 border-b border-gray-300 pb-3">
+                                <p className="text-gray-700 font-bold">Cuentas vinculadas</p>
+                                <div>
+                                    {authentications.map((auth, index) => (
+                                        auth.allowed && (
+                                            <div key={index} className="flex justify-between items-center">
+                                                <p className="text-[16px] my-2">{auth.methodType}</p>
+                                            </div>
+                                        )
                                     ))}
                                 </div>
                             </div>
-                        )}
+                        </div>
+
+
+                    )}
 
 
 
-                    </div>
+                    {selectedSection === 'Privacy & Data' && (
+                        <div>
+                            <div className="text-[#333333] border-b border-gray-300 pb-3">
+                                <h2 className="text-2xl font-bold mb-5">Política de privacidad</h2>
+                                {allowedApplications.map((app, index) => (
+                                    <div key={index} className="mb-4">
+                                        <p className="font-medium">{app.name}</p>
+                                        <p className="text-gray-700">{app.description}</p>
+
+                                        <ul className='list-disc mx-5 my-3 flex flex-col gap-y-[5px]'>
+                                            <li>  <a href={app.privacyPolicy} target="_blank" rel="noopener noreferrer" className="underline text-[#0057b8]">
+                                                Política de Privacidad
+                                            </a>
+
+                                            </li>
+                                            <li>
+                                                <a href={app.termsOfService} target="_blank" rel="noopener noreferrer" className="underline text-[#0057b8]">
+                                                    Términos de Servicio
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+
+
                 </div>
             </div>
-        </Meta>
+        </div>
     );
 };
 
