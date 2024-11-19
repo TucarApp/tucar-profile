@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { buildAuthUri } from '@/helpers/buildUri';
 
 import { useSearchParams } from 'next/navigation';
+import Meta from '@/Layouts/Meta';
 
 
 const Cuenta = () => {
@@ -574,6 +575,7 @@ const Cuenta = () => {
 
 
     return (
+        <Meta title='Profile'>
         <div className='font-Poppins'>
             {/* Barra superior */}
             <div className="w-full bg-[#0057b8] h-16 flex items-center justify-between px-4 lg:px-6">
@@ -891,6 +893,7 @@ const Cuenta = () => {
                 </div>
             </div>
         </div>
+        </Meta>
     );
 };
 
