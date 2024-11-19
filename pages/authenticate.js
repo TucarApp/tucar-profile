@@ -140,13 +140,13 @@ const Cuenta = () => {
     };
     
     // Función para obtener los datos del usuario
-    const fetchUserData = async () => {
+    const fetchUserData = async (acToken = null) => {
         try {
             const response = await fetch('https://account-service-1032838122231.us-central1.run.app/api/v1/users/', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`, // Pasar el token como Bearer
+                    Authorization: `Bearer ${acToken ? acToken : token}`, // Pasar el token como Bearer
                 },
             });
     
