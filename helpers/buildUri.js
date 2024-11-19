@@ -1,7 +1,7 @@
 // TODO: Remplazar por valores de secrets de un env
 const ACCOUNT_APP_URL = 'https://accounts.tucar.dev/';
 const MODE = 'development';
-const PROFILE_APP_URL = 'https://tucar-profile-1032838122231.us-central1.run.app';
+const PROFILE_APP_URL = 'https://tucar-profile-1032838122231.us-central1.run.app//authenticate';
 
 export const getRandomState = () => {
     if (typeof window !== "undefined") { // Verifica si estamos en el navegador
