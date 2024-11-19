@@ -18,6 +18,9 @@ import { useSearchParams } from 'next/navigation';
 
 
 const Cuenta = () => {
+
+    
+
     const [selectedSection, setSelectedSection] = useState('Account Info');
     const router = useRouter();
 
@@ -63,6 +66,15 @@ const Cuenta = () => {
     const [error, setError] = useState(''); // Manejo de errores
 
     useEffect(() => {
+        if (token && userData) {
+            console.log("¡Todo cargado correctamente!");
+            // Reemplaza la URL actual con solo "/"
+            window.history.replaceState(null, '', '/profile');
+        }
+    }, [token, userData]);
+    
+
+    useEffect(() => {
         const fetchTokenAndUserData = async () => {
             try {
                 const code = searchParams.get('code'); // Captura el parámetro "code"
@@ -80,6 +92,8 @@ const Cuenta = () => {
                     client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
                     grant_type: 'authorization_code',
                     redirect_uri: 'https://tucar-profile-1032838122231.us-central1.run.app/authenticate',
+                    //dev
+                    // redirect_uri: 'http://localhost:3000/authenticate',
                 });
     
                 const tokenResponse = await fetch('https://account-service-twvszsnmba-uc.a.run.app/api/v1/oauth/token', {
