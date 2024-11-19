@@ -18,35 +18,25 @@ import { useSearchParams } from 'next/navigation';
 
 
 const Cuenta = () => {
-
-    
-
     const [selectedSection, setSelectedSection] = useState('Account Info');
     const router = useRouter();
 
     const [isEditingPhone, setIsEditingPhone] = useState(false);
     const [isEditingEmail, setIsEditingEmail] = useState(false);
-    const [isChangeConfirmed, setIsChangeConfirmed] = useState(false);
 
     const [allowedApplications, setAllowedApplications] = useState([]);
 
-    console.log(allowedApplications, 'que eees')
     const [name, setName] = useState('');
     const [lastname, setLastname] = useState('');
     const [phone, setPhone] = useState('');
     const [phoneCode, setPhoneCode] = useState('');
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [userIdentifier, setUserIdentifier] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isEditingPassword, setIsEditingPassword] = useState(false);
     const [isCodeSent, setIsCodeSent] = useState(false);
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
 
     const [changePasswordStatus, setChangePasswordStatus] = useState(null);
-    const [confirmPasswordStatus, setConfirmPasswordStatus] = useState(null);
     const [verifiedStatus, setVerifiedStatus] = useState({ email: false, phone: false });
     const [authentications, setAuthentications] = useState([]); // Nuevo estado para autenticaciones
 
@@ -91,7 +81,7 @@ const Cuenta = () => {
                     code,
                     client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
                     grant_type: 'authorization_code',
-                    redirect_uri: 'https://tucar-profile-1032838122231.us-central1.run.app/authenticate',
+                    redirect_uri: 'https://profile.tucar.dev/authenticate',
                     //dev
                     // redirect_uri: 'http://localhost:3000/authenticate',
                 });
@@ -139,8 +129,7 @@ const Cuenta = () => {
             const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/resources/token-metadata?token=${token}`, {
                 method: 'GET',
                 headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
+                    "Content-Type": "application/json"
                 }
             });
     
@@ -184,23 +173,6 @@ const Cuenta = () => {
             setError('Error al obtener datos del usuario. Inténtalo nuevamente.');
         }
     };
-    
-
-    console.log(userData?.firstname, userData?.lastname)
-    console.log(userData?.firstname, userData?.lastname, 'estooo')
-
-
-
-
-
-    
-
-    // const token = "AC.UFCZkWeUrBbOu0h2k5eiXBIA0KM6y-41o8iWbS5WlkhXoWZm6B5XQYK7v91r-_7GnLCEo8j7uQTE2kj9m2Gj47SBmHVeWZ11OkFFt_0uLAxEQzmMgLzkV5KSPBPiEhgC_TvgVjtxpLjnPP9qjMIY8EwI7g6sLdg3sq1S-A.SzqLHfbkwjsPRgT6Ej5FjMWV-1COAepHEqzuTNgtd3lOJbwIU4TdNRabYYaVAKawJhCbsKah0TUQI43c_WotAjtpdS4Yr7wLaJlsi8xub9bIjSC0UeXA8n0GX7RrwH4bTDTbQSGTkBRvaympxx58reTThZEHG9-ctPBHx0akAMzNGS47Pw0hVJSMu-4yVQDkZbhsoZU4ofcMErmOTocGkOhd4HlESmzurKYvt-4QaU5MFqFYv6ApX0bXRXneobBYuMBTjR3MjA2WxoENz4Icif2tX_Cnf6dehL4yJxB0vQ5Z4nUgiodQRpCOBwZYLe_EMScGKOb0yLXcKYuhI-cTUg"
-
-
-
-
-
 
     useEffect(() => {
         const loadData = async () => {
@@ -219,45 +191,11 @@ const Cuenta = () => {
             if (verifyData) {
                 setVerifiedStatus(verifyData.verifiedElements);
             }
-
-            // Fetch user credentials using the default email
-            await fetchUserCredentials("email", "ticomiranda4@gmail.com");
-
             // Obtener el userId usando el token
             await fetchUserId();
         };
         loadData();
     }, []);
-
-
-    // const fetchUserId = async () => {
-    //     if (!token) {
-    //         console.error("El token no está definido o es inválido");
-    //         return;
-    //     }
-    //     try {
-    //         const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/resources/token-metadata?token=${token}`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${token}`
-    //             }
-    //         });
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             console.log("Token Metadata Response:", data); // Consola la respuesta para ver el userId
-    //             setUserId(data.user_id); // Almacena el userId en el estado
-    //         } else {
-    //             const errorData = await response.json();
-    //             console.error("Error fetching token metadata:", response.status, errorData);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error:", error);
-    //     }
-    // };
-    
-
-    // mare
 
     useEffect(() => {
         if (userData) {
@@ -276,61 +214,9 @@ const Cuenta = () => {
         }
     }, [userData]);
 
-    console.log('dataaa', userData)
-
-    // Function to fetch user credentials with token
-    const fetchUserCredentials = async (credentialType, value) => {
-        try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/users/?credential_type=${credentialType}&value=${value}`, {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("User Credentials Response:", data);
-
-                // Update the states with fetched data
-                setName(userData.firstname || '');
-                setLastname(data.lastname || '');
-                setPhone(data.phone || '');
-                setPhoneCode(data.code || '');
-                setEmail(data.email || '');
-                setVerifiedStatus(data.verifiedElements || { email: false, phone: false });
-                setAuthentications(data.authentications || []);
-                setAllowedApplications(data.allowed_applications || []);
-                console.error("Error fetching user credentials:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
-
-
-
     const handleSectionChange = (section) => {
         setSelectedSection(section);
         setIsMenuOpen(false);
-    };
-
-    const cancelEdit2 = () => {
-        setIsEditingPassword(false);
-        setIsCodeSent(false);
-        setIsChangeConfirmed(false);
-        setCurrentPassword('');
-        setNewPassword('');
-        setVerificationCode('');
-        setChangePasswordStatus(null);
-        setConfirmPasswordStatus(null);
-    };
-
-
-    const handleEditPassword = () => {
-        setIsEditingPassword(true);
-        setIsCodeSent(false);
-        setChangePasswordStatus(null);
     };
 
     const cancelEdit = (field) => {
@@ -339,33 +225,6 @@ const Cuenta = () => {
         if (field === 'email') setIsEditingEmail(false);
         if (field === 'password') setIsEditingPassword(false);
         setVerificationCode('');
-    };
-
-
-
-    const handleChangePassword = async () => {
-        const response = await changePassword({
-            password,
-            userIdentifier
-        });
-        if (response.status === "success") {
-            setIsCodeSent(true);
-            setChangePasswordStatus("Código de verificación enviado. Revisa tu correo o teléfono.");
-        } else {
-            setChangePasswordStatus("Error al enviar el código. Inténtalo de nuevo.");
-        }
-    };
-
-    const handleConfirmChangePassword = async () => {
-        const response = await confirmChangePassword({
-            code: verificationCode,
-            userIdentifier
-        });
-        if (response.status === "success") {
-            setConfirmPasswordStatus("Contraseña cambiada con éxito.");
-        } else {
-            setConfirmPasswordStatus("Error al confirmar el cambio de contraseña. Inténtalo de nuevo.");
-        }
     };
 
     // Función para actualizar el nombre o apellido
@@ -400,8 +259,6 @@ const Cuenta = () => {
             console.error("Error:", error);
         }
     };
-
-
 
     const handleSendVerificationCode = async () => {
         try {
@@ -441,7 +298,6 @@ const Cuenta = () => {
             console.error("Error:", error);
         }
     };
-
 
     const handleConfirmVerificationCode = async () => {
         try {
@@ -568,10 +424,6 @@ const Cuenta = () => {
             setBlockStatus("Error de conexión. Inténtalo nuevamente.");
         }
     };
-
-
-
-
 
     return (
         <div className='font-Poppins'>

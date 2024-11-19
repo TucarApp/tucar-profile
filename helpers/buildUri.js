@@ -1,7 +1,7 @@
 // TODO: Remplazar por valores de secrets de un env
 const ACCOUNT_APP_URL = 'https://accounts.tucar.dev/';
 const MODE = 'development';
-const PROFILE_APP_URL = 'https://tucar-profile-1032838122231.us-central1.run.app//authenticate';
+const PROFILE_APP_URL = 'https://profile.tucar.dev';
 
 export const getRandomState = () => {
     if (typeof window !== "undefined") { 
@@ -22,7 +22,7 @@ const buildRequestParams = (params) =>
 
 const buildUri = () => {
     if (MODE !== 'development') return PROFILE_APP_URL;
-    return 'https://tucar-profile-1032838122231.us-central1.run.app';
+    return 'https://profile.tucar.dev';
 };
 
 const baseParams = {
