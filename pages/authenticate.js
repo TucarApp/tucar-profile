@@ -57,8 +57,6 @@ const Cuenta = () => {
 
     useEffect(() => {
         if (token && userData) {
-            console.log("¡Todo cargado correctamente!");
-            // Reemplaza la URL actual con solo "/"
             window.history.replaceState(null, '', '/profile');
         }
     }, [token, userData]);
@@ -96,14 +94,12 @@ const Cuenta = () => {
     
                 if (tokenResponse.ok) {
                     const tokenData = await tokenResponse.json();
-                    console.log('Token recibido:', tokenData.access_token); // Consola el token
                     setToken(tokenData.access_token); // Guardar el token en el estado
     
                     // Paso 2: Obtener el userId con el token
                     const userIdResponse = await fetchUserId(tokenData.access_token);
     
                     if (userIdResponse) {
-                        console.log("UserId obtenido:", userIdResponse); // Consola el userId
                         setUserId(userIdResponse); // Guardar el userId en el estado
     
                         // Paso 3: Obtener datos del usuario con el token y userId
@@ -111,11 +107,9 @@ const Cuenta = () => {
                     }
                 } else {
                     const tokenError = await tokenResponse.json();
-                    console.error('Error al obtener el token:', tokenError);
                     setError(tokenError.error_description || 'Error al obtener el token');
                 }
             } catch (err) {
-                console.error('Error en la solicitud:', err);
                 setError('Error de conexión. Inténtalo nuevamente.');
             }
         };
@@ -124,7 +118,7 @@ const Cuenta = () => {
     }, [searchParams]);
     
     // Función para obtener el userId
-    const fetchUserId = async (token) => {
+    const fetchUserId = async () => {
         try {
             const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/resources/token-metadata?token=${token}`, {
                 method: 'GET',
@@ -135,21 +129,18 @@ const Cuenta = () => {
     
             if (response.ok) {
                 const data = await response.json();
-                console.log("Token Metadata Response:", data); // Consola la respuesta para ver el userId
                 return data.user_id; // Devuelve el userId
             } else {
                 const errorData = await response.json();
-                console.error("Error fetching token metadata:", response.status, errorData);
                 return null;
             }
         } catch (error) {
-            console.error("Error:", error);
             return null;
         }
     };
     
     // Función para obtener los datos del usuario
-    const fetchUserData = async (token) => {
+    const fetchUserData = async () => {
         try {
             const response = await fetch('https://account-service-1032838122231.us-central1.run.app/api/v1/users/', {
                 method: 'GET',
@@ -161,15 +152,12 @@ const Cuenta = () => {
     
             if (response.ok) {
                 const userData = await response.json();
-                console.log('Datos del usuario recibidos:', userData); // Consola los datos
                 setUserData(userData); // Guardar los datos en el estado
             } else {
                 const userError = await response.json();
-                console.error('Error al obtener datos del usuario:', userError);
                 setError(userError.detail || 'Error al obtener los datos del usuario');
             }
         } catch (err) {
-            console.error("Error fetching user data:", err);
             setError('Error al obtener datos del usuario. Inténtalo nuevamente.');
         }
     };
@@ -186,16 +174,19 @@ const Cuenta = () => {
                 setPhone(data.allowedApplications[0].contactPhone || '');
                 setPhoneCode(data.code || '');
                 setEmail(data.allowedApplications[0].contactEmail || '');
-            }
-
-            if (verifyData) {
-                setVerifiedStatus(verifyData.verifiedElements);
+                setVerifiedStatus({
+                    email: data.verifiedElements?.email || false,
+                    phone: data.verifiedElements?.phone || false,
+                });
             }
             // Obtener el userId usando el token
             await fetchUserId();
         };
-        loadData();
-    }, []);
+        if (token) {
+            loadData()
+        };
+        
+    }, [token]);
 
     useEffect(() => {
         if (userData) {
