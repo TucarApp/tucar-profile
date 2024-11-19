@@ -26,6 +26,8 @@ const Cuenta = () => {
     const [isChangeConfirmed, setIsChangeConfirmed] = useState(false);
 
     const [allowedApplications, setAllowedApplications] = useState([]);
+
+    console.log(allowedApplications, 'que eees')
     const [name, setName] = useState('');
     const [lastname, setLastname] = useState('');
     const [phone, setPhone] = useState('');
@@ -175,6 +177,8 @@ const Cuenta = () => {
 
 
 
+
+
     
 
     // const token = "AC.UFCZkWeUrBbOu0h2k5eiXBIA0KM6y-41o8iWbS5WlkhXoWZm6B5XQYK7v91r-_7GnLCEo8j7uQTE2kj9m2Gj47SBmHVeWZ11OkFFt_0uLAxEQzmMgLzkV5KSPBPiEhgC_TvgVjtxpLjnPP9qjMIY8EwI7g6sLdg3sq1S-A.SzqLHfbkwjsPRgT6Ej5FjMWV-1COAepHEqzuTNgtd3lOJbwIU4TdNRabYYaVAKawJhCbsKah0TUQI43c_WotAjtpdS4Yr7wLaJlsi8xub9bIjSC0UeXA8n0GX7RrwH4bTDTbQSGTkBRvaympxx58reTThZEHG9-ctPBHx0akAMzNGS47Pw0hVJSMu-4yVQDkZbhsoZU4ofcMErmOTocGkOhd4HlESmzurKYvt-4QaU5MFqFYv6ApX0bXRXneobBYuMBTjR3MjA2WxoENz4Icif2tX_Cnf6dehL4yJxB0vQ5Z4nUgiodQRpCOBwZYLe_EMScGKOb0yLXcKYuhI-cTUg"
@@ -252,8 +256,11 @@ const Cuenta = () => {
             });
             setAuthentications(userData.authentications || []);
             setAllowedApplications(userData.allowed_applications || []);
+            
         }
     }, [userData]);
+
+    console.log('dataaa', userData)
 
     // Function to fetch user credentials with token
     const fetchUserCredentials = async (credentialType, value) => {
