@@ -59,7 +59,7 @@ const Cuenta = () => {
         if (token && userData) {
             window.history.replaceState(null, '', '/profile');
         }
-    }, [token, userData]);
+    }, [token, userData, verifiedStatus]);
     
 
     useEffect(() => {
@@ -118,9 +118,9 @@ const Cuenta = () => {
     }, [searchParams]);
     
     // Función para obtener el userId
-    const fetchUserId = async () => {
+    const fetchUserId = async (acToken = null) => {
         try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/resources/token-metadata?token=${token}`, {
+            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/resources/token-metadata?token=${acToken ? acToken : token}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json"
@@ -165,7 +165,6 @@ const Cuenta = () => {
     useEffect(() => {
         const loadData = async () => {
             const data = await fetchUserData();
-            const verifyData = await verifyUser();
             setUserData(data);
 
             if (data) {
@@ -360,7 +359,6 @@ const Cuenta = () => {
             console.error("Error:", error);
         }
     };
-
 
     const handleConfirmVerificationCodeForEmail = async () => {
         try {
