@@ -22,7 +22,7 @@ const buildRequestParams = (params) =>
 
 const buildUri = () => {
     if (MODE !== 'development') return PROFILE_APP_URL;
-    return 'https://tucar-profile-1032838122231.us-central1.run.app';
+    return 'https://tucar-profile-1032838122231.us-central1.run.app/authenticate';
 };
 
 const baseParams = {
