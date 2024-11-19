@@ -753,6 +753,7 @@ import { confirmChangePassword } from '../utils/mocks/mockConfirmChangePasswordA
 import { useRouter } from 'next/router';
 
 import { buildAuthUri } from '@/helpers/buildUri';
+import Meta from '@/Layouts/Meta';
 
 
 const Cuenta = () => {
@@ -807,7 +808,8 @@ const Cuenta = () => {
 
 
     return (
-        <div>
+        <Meta title='Profile'>
+            <div>
             <div className='w-full h-screen flex justify-center items-center'>
                 <div className="flex flex-row gap-2">
                     <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce"></div>
@@ -815,7 +817,8 @@ const Cuenta = () => {
                     <div className="w-4 h-4 rounded-full bg-blue-700 animate-bounce [animation-delay:-.5s]"></div>
                 </div>
             </div>
-        </div>
+             </div>
+        </Meta>
     );
 };
 
