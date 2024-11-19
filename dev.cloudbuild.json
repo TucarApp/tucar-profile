@@ -5,7 +5,7 @@
         "entrypoint": "bash",
         "args": [
           "-c",
-          "docker pull us-docker.pkg.dev/$PROJECT_ID/tucar-auth/tucar-auth-image:latest || exit 0"
+          "docker pull us-docker.pkg.dev/$PROJECT_ID/tucar-profile/tucar-profile-image:latest || exit 0"
         ]
       },
       {
@@ -13,9 +13,9 @@
         "args": [
           "build",
           "-t",
-          "us-docker.pkg.dev/$PROJECT_ID/tucar-auth/tucar-auth-image:latest",
+          "us-docker.pkg.dev/$PROJECT_ID/tucar-profile/tucar-profile-image:latest",
           "--cache-from",
-          "us-docker.pkg.dev/$PROJECT_ID/tucar-auth/tucar-auth-image:latest",
+          "us-docker.pkg.dev/$PROJECT_ID/tucar-profile/tucar-profile-image:latest",
           "-f", 
           "./Dockerfile",
           "."
@@ -25,7 +25,7 @@
         "name": "gcr.io/cloud-builders/docker",
         "args": [
           "push",
-          "us-docker.pkg.dev/$PROJECT_ID/tucar-auth/tucar-auth-image:latest"
+          "us-docker.pkg.dev/$PROJECT_ID/tucar-profile/tucar-profile-image:latest"
         ]
       },
       {
@@ -34,16 +34,16 @@
         "args": [
           "run",
           "deploy",
-          "tucar-auth",
+          "tucar-profile",
           "--image",
-          "us-docker.pkg.dev/$PROJECT_ID/tucar-auth/tucar-auth-image:latest",
+          "us-docker.pkg.dev/$PROJECT_ID/tucar-profile/tucar-profile-image:latest",
           "--region",
           "us-central1"
         ]
       }
     ],
     "images": [
-      "us-docker.pkg.dev/$PROJECT_ID/tucar-auth/tucar-auth-image:latest"
+      "us-docker.pkg.dev/$PROJECT_ID/tucar-profile/tucar-profile-image:latest"
     ],
     "timeout": "1000s"
   }
