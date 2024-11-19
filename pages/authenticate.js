@@ -14,6 +14,8 @@ import { useRouter } from 'next/router';
 
 import { buildAuthUri } from '@/helpers/buildUri';
 
+import { useSearchParams } from 'next/navigation';
+
 
 const Cuenta = () => {
     const [selectedSection, setSelectedSection] = useState('Account Info');
@@ -37,7 +39,7 @@ const Cuenta = () => {
     const [isCodeSent, setIsCodeSent] = useState(false);
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [userData, setUserData] = useState(null);
+
     const [changePasswordStatus, setChangePasswordStatus] = useState(null);
     const [confirmPasswordStatus, setConfirmPasswordStatus] = useState(null);
     const [verifiedStatus, setVerifiedStatus] = useState({ email: false, phone: false });
@@ -53,10 +55,132 @@ const Cuenta = () => {
     const [blockStatus, setBlockStatus] = useState(''); // Estado para almacenar el mensaje de bloqueo
 
 
+    const searchParams = useSearchParams(); // Hook de next/navigation
+    const [token, setToken] = useState(null); // Guardar el token recibido
+    const [userData, setUserData] = useState(null); // Guardar los datos del usuario
+    const [error, setError] = useState(''); // Manejo de errores
+
+    useEffect(() => {
+        const fetchTokenAndUserData = async () => {
+            try {
+                const code = searchParams.get('code'); // Captura el parámetro "code"
+                const state = searchParams.get('state'); // Opcional: captura el parámetro "state"
+    
+                // Validar si el código existe
+                if (!code) {
+                    setError('No se encontró el código en la URL');
+                    return;
+                }
+    
+                // Paso 1: Obtener el token
+                const body = new URLSearchParams({
+                    code,
+                    client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
+                    grant_type: 'authorization_code',
+                    redirect_uri: 'http://localhost:3000/authenticate',
+                });
+    
+                const tokenResponse = await fetch('https://account-service-twvszsnmba-uc.a.run.app/api/v1/oauth/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: body.toString(),
+                });
+    
+                if (tokenResponse.ok) {
+                    const tokenData = await tokenResponse.json();
+                    console.log('Token recibido:', tokenData.access_token); // Consola el token
+                    setToken(tokenData.access_token); // Guardar el token en el estado
+    
+                    // Paso 2: Obtener el userId con el token
+                    const userIdResponse = await fetchUserId(tokenData.access_token);
+    
+                    if (userIdResponse) {
+                        console.log("UserId obtenido:", userIdResponse); // Consola el userId
+                        setUserId(userIdResponse); // Guardar el userId en el estado
+    
+                        // Paso 3: Obtener datos del usuario con el token y userId
+                        await fetchUserData(tokenData.access_token);
+                    }
+                } else {
+                    const tokenError = await tokenResponse.json();
+                    console.error('Error al obtener el token:', tokenError);
+                    setError(tokenError.error_description || 'Error al obtener el token');
+                }
+            } catch (err) {
+                console.error('Error en la solicitud:', err);
+                setError('Error de conexión. Inténtalo nuevamente.');
+            }
+        };
+    
+        fetchTokenAndUserData();
+    }, [searchParams]);
+    
+    // Función para obtener el userId
+    const fetchUserId = async (token) => {
+        try {
+            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/resources/token-metadata?token=${token}`, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Token Metadata Response:", data); // Consola la respuesta para ver el userId
+                return data.user_id; // Devuelve el userId
+            } else {
+                const errorData = await response.json();
+                console.error("Error fetching token metadata:", response.status, errorData);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            return null;
+        }
+    };
+    
+    // Función para obtener los datos del usuario
+    const fetchUserData = async (token) => {
+        try {
+            const response = await fetch('https://account-service-1032838122231.us-central1.run.app/api/v1/users/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`, // Pasar el token como Bearer
+                },
+            });
+    
+            if (response.ok) {
+                const userData = await response.json();
+                console.log('Datos del usuario recibidos:', userData); // Consola los datos
+                setUserData(userData); // Guardar los datos en el estado
+            } else {
+                const userError = await response.json();
+                console.error('Error al obtener datos del usuario:', userError);
+                setError(userError.detail || 'Error al obtener los datos del usuario');
+            }
+        } catch (err) {
+            console.error("Error fetching user data:", err);
+            setError('Error al obtener datos del usuario. Inténtalo nuevamente.');
+        }
+    };
+    
+
+    console.log(userData?.firstname, userData?.lastname)
+    console.log(userData?.firstname, userData?.lastname, 'estooo')
 
 
 
-    const token = "AC.ktAmk6vZ5cvxSCLOURFUH4GG_PGnGPojKjDlbpWEY9mW1CPaksGzs4S234s0uSuJXQsTb_kmo1x8XOPmcaNHQNokAEU_S5zklOy-lR4r7HdHtpbTEugZyQODem0SiesoZ7GbEsisPY8Ye0lOsP0LdDegk5GLTartTHflBw.YKxm8hDoQaeJPRP4RgIJzKZNBbFWdp048NR0XB9OVZ7TBmBwR-mm5vASFnfBs2fpCdCU1pYV_ciMMAm4Px1fmrtFDTPZNafp5hllouxOlo_43RvNpM7dg3zQfFA5O2hcvx6Lh_dib_AfAJ6BZTr5EgVprfQoedAZOCP3M6Ox5LWKDMfPtKdCQwxlTei3-RRu6Rf-LZxBqzU95rVRjSO4Iy6_lGiUKZ81XgORDuH1b5SWZ7AyMpKL65h5XZtv6TUcu0CNiV0Y7x_C-Tl6f-2qGnqnTOCF2iBsaoFqtnukxLOIEUk7tKj_lNlXsYSgY0j9iT8vFBo_N2Cn8AwuiJZBsw"
+    
+
+    // const token = "AC.UFCZkWeUrBbOu0h2k5eiXBIA0KM6y-41o8iWbS5WlkhXoWZm6B5XQYK7v91r-_7GnLCEo8j7uQTE2kj9m2Gj47SBmHVeWZ11OkFFt_0uLAxEQzmMgLzkV5KSPBPiEhgC_TvgVjtxpLjnPP9qjMIY8EwI7g6sLdg3sq1S-A.SzqLHfbkwjsPRgT6Ej5FjMWV-1COAepHEqzuTNgtd3lOJbwIU4TdNRabYYaVAKawJhCbsKah0TUQI43c_WotAjtpdS4Yr7wLaJlsi8xub9bIjSC0UeXA8n0GX7RrwH4bTDTbQSGTkBRvaympxx58reTThZEHG9-ctPBHx0akAMzNGS47Pw0hVJSMu-4yVQDkZbhsoZU4ofcMErmOTocGkOhd4HlESmzurKYvt-4QaU5MFqFYv6ApX0bXRXneobBYuMBTjR3MjA2WxoENz4Icif2tX_Cnf6dehL4yJxB0vQ5Z4nUgiodQRpCOBwZYLe_EMScGKOb0yLXcKYuhI-cTUg"
+
+
+
 
 
 
@@ -87,27 +211,49 @@ const Cuenta = () => {
         loadData();
     }, []);
 
-   
-    const fetchUserId = async () => {
-        try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/resources/token-metadata?token=${token}`, {
-                method: 'GET',
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                }
+
+    // const fetchUserId = async () => {
+    //     if (!token) {
+    //         console.error("El token no está definido o es inválido");
+    //         return;
+    //     }
+    //     try {
+    //         const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/resources/token-metadata?token=${token}`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Authorization: `Bearer ${token}`
+    //             }
+    //         });
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             console.log("Token Metadata Response:", data); // Consola la respuesta para ver el userId
+    //             setUserId(data.user_id); // Almacena el userId en el estado
+    //         } else {
+    //             const errorData = await response.json();
+    //             console.error("Error fetching token metadata:", response.status, errorData);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error:", error);
+    //     }
+    // };
+    
+
+    useEffect(() => {
+        if (userData) {
+            setName(userData.firstname || '');
+            setLastname(userData.lastname || '');
+            setPhone(userData.phone || '');
+            setPhoneCode(userData.code || '');
+            setEmail(userData.email || '');
+            setVerifiedStatus({
+                email: userData.verifiedElements?.email || false,
+                phone: userData.verifiedElements?.phone || false,
             });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Token Metadata Response:", data); // Consola la respuesta para ver el userId
-                setUserId(data.user_id); // Almacena el userId en el estado
-            } else {
-                console.error("Error fetching token metadata:", response.statusText);
-            }
-        } catch (error) {
-            console.error("Error:", error);
+            setAuthentications(userData.authentications || []);
+            setAllowedApplications(userData.allowed_applications || []);
         }
-    };
+    }, [userData]);
 
     // Function to fetch user credentials with token
     const fetchUserCredentials = async (credentialType, value) => {
@@ -124,7 +270,7 @@ const Cuenta = () => {
                 console.log("User Credentials Response:", data);
 
                 // Update the states with fetched data
-                setName(data.firstname || '');
+                setName(userData.firstname || '');
                 setLastname(data.lastname || '');
                 setPhone(data.phone || '');
                 setPhoneCode(data.code || '');
@@ -639,53 +785,53 @@ const Cuenta = () => {
                                 </button>
                             </div>
 
-                  
+
                         </div>
                     )}
 
                     {selectedSection === 'Security' && (
-                    
-                       
-                    
-                           <div>
-                               <div className="text-[#333333] mb-5 border-b border-gray-300 pb-3">
-                                   <h2 className="text-2xl font-bold mb-5">Cambiar Contraseña</h2>
-                       
-                                   {!isEditingPassword ? (
-                                       // Etapa inicial: Contraseña oculta y botón de edición
-                                       <div className="flex justify-between items-center mb-5">
-                                           <p className="text-[16px]">●●●●●●●●</p>
-                                           <button 
-                                               onClick={() => router.push('/change-password')} 
-                                               className="text-blue-500"
-                                           >
-                                               <PencilIcon className="h-5 w-5" />
-                                           </button>
-                                       </div>
-                                   ) : (
-                                       // Resto del código de edición de contraseña
-                                       <>
-                                           {/* Código de edición de contraseña aquí */}
-                                       </>
-                                   )}
-                               </div>
-                       
-                               {/* Cuentas vinculadas */}
-                               <div className="mb-5 border-b border-gray-300 pb-3">
-                                   <p className="text-gray-700 font-bold">Cuentas vinculadas</p>
-                                   <div>
-                                       {authentications.map((auth, index) => (
-                                           auth.allowed && (
-                                               <div key={index} className="flex justify-between items-center">
-                                                   <p className="text-[16px] my-2">{auth.methodType}</p>
-                                               </div>
-                                           )
-                                       ))}
-                                   </div>
-                               </div>
-                           </div>
-                       
-                       
+
+
+
+                        <div>
+                            <div className="text-[#333333] mb-5 border-b border-gray-300 pb-3">
+                                <h2 className="text-2xl font-bold mb-5">Cambiar Contraseña</h2>
+
+                                {!isEditingPassword ? (
+                                    // Etapa inicial: Contraseña oculta y botón de edición
+                                    <div className="flex justify-between items-center mb-5">
+                                        <p className="text-[16px]">●●●●●●●●</p>
+                                        <button
+                                            onClick={() => router.push('/change-password')}
+                                            className="text-blue-500"
+                                        >
+                                            <PencilIcon className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    // Resto del código de edición de contraseña
+                                    <>
+                                        {/* Código de edición de contraseña aquí */}
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Cuentas vinculadas */}
+                            <div className="mb-5 border-b border-gray-300 pb-3">
+                                <p className="text-gray-700 font-bold">Cuentas vinculadas</p>
+                                <div>
+                                    {authentications.map((auth, index) => (
+                                        auth.allowed && (
+                                            <div key={index} className="flex justify-between items-center">
+                                                <p className="text-[16px] my-2">{auth.methodType}</p>
+                                            </div>
+                                        )
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+
                     )}
 
 
