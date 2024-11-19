@@ -15,7 +15,6 @@ import { useRouter } from 'next/router';
 import { buildAuthUri } from '@/helpers/buildUri';
 
 import { useSearchParams } from 'next/navigation';
-import Meta from '@/Layouts/Meta';
 
 
 const Cuenta = () => {
@@ -92,7 +91,7 @@ const Cuenta = () => {
                     code,
                     client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
                     grant_type: 'authorization_code',
-                    redirect_uri: 'https://profile.tucar.dev/authenticate',
+                    redirect_uri: 'https://tucar-profile-1032838122231.us-central1.run.app/authenticate',
                     //dev
                     // redirect_uri: 'http://localhost:3000/authenticate',
                 });
@@ -575,7 +574,6 @@ const Cuenta = () => {
 
 
     return (
-        <Meta title='Profile'>
         <div className='font-Poppins'>
             {/* Barra superior */}
             <div className="w-full bg-[#0057b8] h-16 flex items-center justify-between px-4 lg:px-6">
@@ -893,7 +891,6 @@ const Cuenta = () => {
                 </div>
             </div>
         </div>
-        </Meta>
     );
 };
 
