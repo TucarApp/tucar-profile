@@ -449,7 +449,7 @@ const Cuenta = () => {
                             className={`cursor-pointer mb-4 ${selectedSection === 'Privacy & Data' ? 'font-bold' : ''}`}
                             onClick={() => handleSectionChange('Privacy & Data')}
                         >
-                            Política de privacidad y datoss
+                            Política de privacidad y datos
                         </li>
                     </ul>
                     {/* Botón de cerrar sesión fijo en la parte inferior */}
