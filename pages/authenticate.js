@@ -459,16 +459,18 @@ const Cuenta = () => {
                             Política de privacidad y datos
                         </li>
                     </ul>
-                    <div className="p-5">
-        <button
-            onClick={() => router.push(`/logout?redirect_uri=${encodeURIComponent('https://profile.tucar.dev')}`)}
-            className="flex items-center gap-2 text-red-600 font-medium hover:text-red-800"
-        >
-            <XIcon className="h-5 w-5" />
-            Cerrar sesión
-        </button>
-    </div>
+                    {/* Botón de cerrar sesión fijo en la parte inferior */}
+                    <div className="absolute bottom-0 lg:bottom-24 w-full p-5">
+                        <button
+                            onClick={() => router.push(`/logout?redirect_uri=${encodeURIComponent('https://profile.tucar.dev')}`)}
+                            className="flex items-center gap-2 text-red-600 font-medium hover:text-red-800"
+                        >
+                            <XIcon className="h-5 w-5" />
+                            Cerrar sesión
+                        </button>
+                    </div>
                 </div>
+
 
                 {/* Contenido */}
                 <div className="w-full lg:w-[55%] p-10 text-[#333333]">

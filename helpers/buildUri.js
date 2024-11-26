@@ -43,7 +43,7 @@ export const buildAuthUri = () => {
     return `${ACCOUNT_APP_URL}/?${buildRequestParams(params)}`;
 };
 
-console.log(buildUri());
+
 
 
 //DEEEEEVVVV

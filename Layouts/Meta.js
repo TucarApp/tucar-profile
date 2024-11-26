@@ -53,6 +53,7 @@ function Meta({ children, title, ...customMeta }) {
         )}
 
       </Head>
+      {children}
     </>
   );
 }
