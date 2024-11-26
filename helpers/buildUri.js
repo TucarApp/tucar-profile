@@ -1,7 +1,7 @@
 
-const ACCOUNT_APP_URL = 'https://accounts.tucar.dev/';
-const MODE = 'development';
-const PROFILE_APP_URL = 'https://profile.tucar.dev';
+const ACCOUNT_APP_URL = 'https://accounts.tucar.app/';
+const MODE = 'production';
+const PROFILE_APP_URL = 'https://profile.tucar.app';
 
 export const getRandomState = () => {
     if (typeof window !== "undefined") { 
