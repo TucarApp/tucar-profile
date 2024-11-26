@@ -455,7 +455,7 @@ const Cuenta = () => {
                     {/* Botón de cerrar sesión fijo en la parte inferior */}
                     <div className="absolute bottom-10 lg:bottom-24 w-full p-5">
                         <button
-                            onClick={() => router.push(`/logout?redirect_uri=${encodeURIComponent('https://profile.tucar.app')}`)}
+                            onClick={() => router.push(`/logout?redirect_uri=${encodeURIComponent('https://profile.tucar.dev')}`)}
                             className="flex items-center gap-2 text-red-600 font-medium hover:text-red-800"
                         >
                             <XIcon className="h-5 w-5" />
@@ -674,7 +674,7 @@ const Cuenta = () => {
                                     // Etapa inicial: Contraseña oculta y botón de edición
                                     <div className="flex justify-between items-center mb-5">
                                         <p className="text-[16px]">●●●●●●●●</p>
-                                        <a href='https://accounts.tucar.app/change-password' target='_blank'>                                        <button
+                                        <a href='https://accounts.tucar.dev/change-password' target='_blank'>                                        <button
 
                                             className="text-blue-500"
                                         >
