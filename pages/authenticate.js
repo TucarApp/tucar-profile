@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { PencilIcon, XIcon, MenuIcon, CheckCircleIcon, ExclamationCircleIcon, ChevronRightIcon } from '@heroicons/react/solid';
+import { PencilIcon, XIcon, MenuIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/solid';
 import TucarLogo from '../components/LogoTucar/LogoTucar';
 import AuthButton from '@/components/Auth/AuthButton';
 import InputField from '@/components/Auth/InputField';
@@ -88,7 +88,7 @@ const Cuenta = () => {
                     // redirect_uri: 'http://localhost:3000/authenticate',
                 });
 
-                const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/oauth/token`, {
+                const tokenResponse = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/oauth/token`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -124,7 +124,7 @@ const Cuenta = () => {
     // Función para obtener el userId
     const fetchUserId = async (acToken = null) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/resources/token-metadata?token=${acToken ? acToken : token}`, {
+            const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/resources/token-metadata?token=${acToken ? acToken : token}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json"
@@ -146,7 +146,7 @@ const Cuenta = () => {
     // Función para obtener los datos del usuario
     const fetchUserData = async (acToken = null) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/`, {
+            const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -225,7 +225,7 @@ const Cuenta = () => {
     // Función para actualizar el nombre o apellido
     const updateUserCredential = async (type, value) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/credentials`, {
+            const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/credentials`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -257,7 +257,7 @@ const Cuenta = () => {
 
     const handleSendVerificationCode = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/credentials`, {
+            const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/credentials`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -296,7 +296,7 @@ const Cuenta = () => {
 
     const handleConfirmVerificationCode = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/verify`, {
+            const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/verify`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -326,7 +326,7 @@ const Cuenta = () => {
 
     const handleSendVerificationCodeForEmail = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/credentials`, {
+            const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/credentials`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -367,7 +367,7 @@ const Cuenta = () => {
 
     const handleConfirmVerificationCodeForEmail = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/verify`, {
+            const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/verify`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -396,7 +396,7 @@ const Cuenta = () => {
 
     const handleBlockAccount = async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/block`, {
+            const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/block`, {
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",
