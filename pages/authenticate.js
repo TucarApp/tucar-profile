@@ -55,35 +55,46 @@ const Cuenta = () => {
     const [userData, setUserData] = useState(null); // Guardar los datos del usuario
     const [error, setError] = useState(''); // Manejo de errores
 
+    const [isLoading, setIsLoading] = useState(true);
+
+
     useEffect(() => {
         if (token && userData) {
             window.history.replaceState(null, '', '/profile');
         }
     }, [token, userData, verifiedStatus]);
-    
+
+
+    useEffect(() => {
+        if (token && userData) {
+            setIsLoading(false); // Todo cargado
+        }
+    }, [token, userData]);
+
+
 
     useEffect(() => {
         const fetchTokenAndUserData = async () => {
             try {
                 const code = searchParams.get('code'); // Captura el parámetro "code"
                 const state = searchParams.get('state'); // Opcional: captura el parámetro "state"
-    
+
                 // Validar si el código existe
                 if (!code) {
                     setError('No se encontró el código en la URL');
                     return;
                 }
-    
+
                 // Paso 1: Obtener el token
                 const body = new URLSearchParams({
                     code,
                     client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
                     grant_type: 'authorization_code',
-                    redirect_uri: 'https://profile.tucar.dev/authenticate',
+                    // redirect_uri: 'https://profile.tucar.dev/authenticate',
                     //dev
-                    // redirect_uri: 'http://localhost:3000/authenticate',
+                    redirect_uri: 'http://localhost:3000/authenticate',
                 });
-    
+
                 const tokenResponse = await fetch('https://account-service-twvszsnmba-uc.a.run.app/api/v1/oauth/token', {
                     method: 'POST',
                     headers: {
@@ -91,17 +102,17 @@ const Cuenta = () => {
                     },
                     body: body.toString(),
                 });
-    
+
                 if (tokenResponse.ok) {
                     const tokenData = await tokenResponse.json();
                     setToken(tokenData.access_token); // Guardar el token en el estado
-    
+
                     // Paso 2: Obtener el userId con el token
                     const userIdResponse = await fetchUserId(tokenData.access_token);
-    
+
                     if (userIdResponse) {
                         setUserId(userIdResponse); // Guardar el userId en el estado
-    
+
                         // Paso 3: Obtener datos del usuario con el token y userId
                         await fetchUserData(tokenData.access_token);
                     }
@@ -113,10 +124,10 @@ const Cuenta = () => {
                 setError('Error de conexión. Inténtalo nuevamente.');
             }
         };
-    
+
         fetchTokenAndUserData();
     }, [searchParams]);
-    
+
     // Función para obtener el userId
     const fetchUserId = async (acToken = null) => {
         try {
@@ -126,7 +137,7 @@ const Cuenta = () => {
                     "Content-Type": "application/json"
                 }
             });
-    
+
             if (response.ok) {
                 const data = await response.json();
                 return data.user_id; // Devuelve el userId
@@ -138,7 +149,7 @@ const Cuenta = () => {
             return null;
         }
     };
-    
+
     // Función para obtener los datos del usuario
     const fetchUserData = async (acToken = null) => {
         try {
@@ -149,7 +160,7 @@ const Cuenta = () => {
                     Authorization: `Bearer ${acToken ? acToken : token}`, // Pasar el token como Bearer
                 },
             });
-    
+
             if (response.ok) {
                 const userData = await response.json();
                 setUserData(userData); // Guardar los datos en el estado
@@ -184,7 +195,7 @@ const Cuenta = () => {
         if (token) {
             loadData()
         };
-        
+
     }, [token]);
 
     useEffect(() => {
@@ -200,7 +211,7 @@ const Cuenta = () => {
             });
             setAuthentications(userData.authentications || []);
             setAllowedApplications(userData.allowed_applications || []);
-            
+
         }
     }, [userData]);
 
@@ -211,6 +222,7 @@ const Cuenta = () => {
 
     const cancelEdit = (field) => {
         if (field === 'name') setIsEditingName(false);
+        if (field === 'lastname') setIsEditingLastname(false);
         if (field === 'phone') setIsEditingPhone(false);
         if (field === 'email') setIsEditingEmail(false);
         if (field === 'password') setIsEditingPassword(false);
@@ -447,6 +459,15 @@ const Cuenta = () => {
                             Política de privacidad y datos
                         </li>
                     </ul>
+                    <div className="p-5">
+        <button
+            onClick={() => router.push(`/logout?redirect_uri=${encodeURIComponent('https://profile.tucar.dev')}`)}
+            className="flex items-center gap-2 text-red-600 font-medium hover:text-red-800"
+        >
+            <XIcon className="h-5 w-5" />
+            Cerrar sesión
+        </button>
+    </div>
                 </div>
 
                 {/* Contenido */}
@@ -459,7 +480,9 @@ const Cuenta = () => {
                             <div className="mb-5 border-b border-gray-300 pb-3">
                                 <p className="text-gray-700 font-bold">Nombre</p>
                                 <div className="flex justify-between items-center">
-                                    {isEditingName ? (
+                                    {isLoading ? (
+                                        <div className="h-6 bg-gray-300 animate-pulse rounded w-full"></div>
+                                    ) : isEditingName ? (
                                         <div className="flex flex-col w-full">
                                             <InputField
                                                 type="text"
@@ -472,10 +495,7 @@ const Cuenta = () => {
                                                 <AuthButton className="flex-1" onClick={() => cancelEdit('name')} variant="secondary">
                                                     Cancelar
                                                 </AuthButton>
-                                                <AuthButton
-                                                    className="flex-1"
-                                                    onClick={() => updateUserCredential('firstname', name)}
-                                                >
+                                                <AuthButton className="flex-1" onClick={() => updateUserCredential('firstname', name)}>
                                                     Continuar
                                                 </AuthButton>
                                             </div>
@@ -492,7 +512,9 @@ const Cuenta = () => {
 
                                 <p className="text-gray-700 font-bold mt-5">Apellido</p>
                                 <div className="flex justify-between items-center">
-                                    {isEditingLastname ? (
+                                    {isLoading ? (
+                                        <div className="h-6 bg-gray-300 animate-pulse rounded w-full"></div>
+                                    ) : isEditingLastname ? (
                                         <div className="flex flex-col w-full">
                                             <InputField
                                                 type="text"
@@ -505,10 +527,7 @@ const Cuenta = () => {
                                                 <AuthButton className="flex-1" onClick={() => cancelEdit('lastname')} variant="secondary">
                                                     Cancelar
                                                 </AuthButton>
-                                                <AuthButton
-                                                    className="flex-1"
-                                                    onClick={() => updateUserCredential('lastname', lastname)}
-                                                >
+                                                <AuthButton className="flex-1" onClick={() => updateUserCredential('lastname', lastname)}>
                                                     Continuar
                                                 </AuthButton>
                                             </div>
@@ -522,18 +541,15 @@ const Cuenta = () => {
                                         </div>
                                     )}
                                 </div>
-
-
                             </div>
-
-
-
 
                             {/* Campo de Teléfono */}
                             <div className="mb-5 border-b border-gray-300 pb-3">
                                 <p className="text-gray-700 font-bold">Número de teléfono</p>
                                 <div className="flex justify-between items-center">
-                                    {isEditingPhone ? (
+                                    {isLoading ? (
+                                        <div className="h-6 bg-gray-300 animate-pulse rounded w-full"></div>
+                                    ) : isEditingPhone ? (
                                         <div className="flex flex-col gap-2">
                                             <InputField
                                                 type="text"
@@ -551,17 +567,23 @@ const Cuenta = () => {
                                                         onChange={(e) => setVerificationCode(e.target.value)}
                                                     />
                                                     <div className="flex gap-2 mt-2">
-                                                        <AuthButton onClick={() => cancelEdit('phone')} variant="secondary">Cancelar</AuthButton>
+                                                        <AuthButton onClick={() => cancelEdit('phone')} variant="secondary">
+                                                            Cancelar
+                                                        </AuthButton>
                                                         <AuthButton onClick={handleConfirmVerificationCode}>Confirmar cambio</AuthButton>
                                                     </div>
                                                 </>
                                             ) : (
                                                 <div className="flex gap-2 mt-2">
-                                                    <AuthButton onClick={() => cancelEdit('phone')} variant="secondary">Cancelar</AuthButton>
+                                                    <AuthButton onClick={() => cancelEdit('phone')} variant="secondary">
+                                                        Cancelar
+                                                    </AuthButton>
                                                     <AuthButton onClick={handleSendVerificationCode}>Enviar Código</AuthButton>
                                                 </div>
                                             )}
-                                            {phoneError && <p className="text-red-500 text-sm mt-1 text-center font-Poppins font-light">{phoneError}</p>}
+                                            {phoneError && (
+                                                <p className="text-red-500 text-sm mt-1 text-center font-Poppins font-light">{phoneError}</p>
+                                            )}
                                         </div>
                                     ) : (
                                         <>
@@ -581,15 +603,13 @@ const Cuenta = () => {
                                 </div>
                             </div>
 
-
-
-
-
                             {/* Campo de Email */}
                             <div className="mb-5 border-b border-gray-300 pb-3">
                                 <p className="text-gray-700 font-bold">Email</p>
                                 <div className="flex justify-between items-center">
-                                    {isEditingEmail ? (
+                                    {isLoading ? (
+                                        <div className="h-6 bg-gray-300 animate-pulse rounded w-full"></div>
+                                    ) : isEditingEmail ? (
                                         <div className="flex flex-col gap-2">
                                             <InputField
                                                 type="email"
@@ -607,17 +627,27 @@ const Cuenta = () => {
                                                         onChange={(e) => setVerificationCode(e.target.value)}
                                                     />
                                                     <div className="flex gap-2 mt-2">
-                                                        <AuthButton onClick={() => cancelEdit('email')} variant="secondary">Cancelar</AuthButton>
-                                                        <AuthButton onClick={handleConfirmVerificationCodeForEmail}>Confirmar cambio</AuthButton>
+                                                        <AuthButton onClick={() => cancelEdit('email')} variant="secondary">
+                                                            Cancelar
+                                                        </AuthButton>
+                                                        <AuthButton onClick={handleConfirmVerificationCodeForEmail}>
+                                                            Confirmar cambio
+                                                        </AuthButton>
                                                     </div>
                                                 </>
                                             ) : (
                                                 <div className="flex gap-2 mt-2">
-                                                    <AuthButton onClick={() => cancelEdit('email')} variant="secondary">Cancelar</AuthButton>
+                                                    <AuthButton onClick={() => cancelEdit('email')} variant="secondary">
+                                                        Cancelar
+                                                    </AuthButton>
                                                     <AuthButton onClick={handleSendVerificationCodeForEmail}>Enviar Código</AuthButton>
                                                 </div>
                                             )}
-                                            {emailError && <p className="text-red-500 text-sm mt-1 font-Poppins font-light text-center">{emailError}</p>}
+                                            {emailError && (
+                                                <p className="text-red-500 text-sm mt-1 font-Poppins font-light text-center">
+                                                    {emailError}
+                                                </p>
+                                            )}
                                         </div>
                                     ) : (
                                         <div className="flex items-center gap-1 w-full">
@@ -634,22 +664,6 @@ const Cuenta = () => {
                                     )}
                                 </div>
                             </div>
-
-                            <div className='flex justify-end'>
-                                <button
-                                    onClick={() => {
-                                        const isConfirmed = window.confirm("¿Estás seguro de que deseas bloquear la cuenta?");
-                                        if (isConfirmed) {
-                                            handleBlockAccount();
-                                        }
-                                    }}
-                                    className="bg-red-600 hover:bg-red-700 mt-5 font-Poppins text-white font-medium py-2 px-4 rounded shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-left"
-                                >
-                                    Bloquear Cuenta
-                                </button>
-                            </div>
-
-
                         </div>
                     )}
 
@@ -665,12 +679,14 @@ const Cuenta = () => {
                                     // Etapa inicial: Contraseña oculta y botón de edición
                                     <div className="flex justify-between items-center mb-5">
                                         <p className="text-[16px]">●●●●●●●●</p>
-                                        <button
-                                            onClick={() => router.push('/change-password')}
+                                        <a href='https://accounts.tucar.dev/change-password' target='_blank'>                                        <button
+
                                             className="text-blue-500"
                                         >
                                             <PencilIcon className="h-5 w-5" />
                                         </button>
+                                        </a>
+
                                     </div>
                                 ) : (
                                     // Resto del código de edición de contraseña
@@ -697,9 +713,6 @@ const Cuenta = () => {
 
 
                     )}
-
-
-
                     {selectedSection === 'Privacy & Data' && (
                         <div>
                             <div className="text-[#333333] border-b border-gray-300 pb-3">
@@ -728,8 +741,8 @@ const Cuenta = () => {
                     )}
 
 
-
                 </div>
+
             </div>
         </div>
     );

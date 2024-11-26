@@ -796,9 +796,6 @@ const Cuenta = () => {
 
 
 
-
-
-
     useEffect(() => {
         const authUri = buildAuthUri();
         window.location.href = authUri;
