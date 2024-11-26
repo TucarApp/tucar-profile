@@ -739,63 +739,12 @@
 
 
 import { useState, useEffect } from 'react';
-import { PencilIcon, XIcon, MenuIcon, CheckCircleIcon, ExclamationCircleIcon, ChevronRightIcon } from '@heroicons/react/solid';
-import TucarLogo from '../components/LogoTucar/LogoTucar';
-import AuthButton from '@/components/Auth/AuthButton';
-import InputField from '@/components/Auth/InputField';
-
-
-import { fetchUserData } from '../utils/mocks/mockUsersApi';
-import { updateCredentials } from '../utils/mocks/mockCredentialsApi';
-import { verifyUser } from '../utils/mocks/mockVerifyApi';
-import { changePassword } from '../utils/mocks/mockChangePasswordApi';
-import { confirmChangePassword } from '../utils/mocks/mockConfirmChangePasswordApi';
-import { useRouter } from 'next/router';
-
 import { buildAuthUri } from '@/helpers/buildUri';
 import Meta from '@/Layouts/Meta';
 
 
 const Cuenta = () => {
-    const [selectedSection, setSelectedSection] = useState('Account Info');
-    const router = useRouter();
-
-    const [isEditingPhone, setIsEditingPhone] = useState(false);
-    const [isEditingEmail, setIsEditingEmail] = useState(false);
-    const [isChangeConfirmed, setIsChangeConfirmed] = useState(false);
-
-    const [allowedApplications, setAllowedApplications] = useState([]);
-    const [name, setName] = useState('');
-    const [lastname, setLastname] = useState('');
-    const [phone, setPhone] = useState('');
-    const [phoneCode, setPhoneCode] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [userIdentifier, setUserIdentifier] = useState('');
-    const [verificationCode, setVerificationCode] = useState('');
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isEditingPassword, setIsEditingPassword] = useState(false);
-    const [isCodeSent, setIsCodeSent] = useState(false);
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [userData, setUserData] = useState(null);
-    const [changePasswordStatus, setChangePasswordStatus] = useState(null);
-    const [confirmPasswordStatus, setConfirmPasswordStatus] = useState(null);
-    const [verifiedStatus, setVerifiedStatus] = useState({ email: false, phone: false });
-    const [authentications, setAuthentications] = useState([]); // Nuevo estado para autenticaciones
-
-    const [isEditingName, setIsEditingName] = useState(false);
-    const [isEditingLastname, setIsEditingLastname] = useState(false);
-
-    const [userId, setUserId] = useState(null); // Estado para almacenar el userId
-
-    const [phoneError, setPhoneError] = useState('');
-    const [emailError, setEmailError] = useState(''); // Define emailError y su setter setEmailError
-    const [blockStatus, setBlockStatus] = useState(''); // Estado para almacenar el mensaje de bloqueo
-
-
-
-
+   
 
 
 
