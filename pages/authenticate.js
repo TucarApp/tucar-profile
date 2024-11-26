@@ -4,15 +4,8 @@ import TucarLogo from '../components/LogoTucar/LogoTucar';
 import AuthButton from '@/components/Auth/AuthButton';
 import InputField from '@/components/Auth/InputField';
 
-
-import { fetchUserData } from '../utils/mocks/mockUsersApi';
-import { updateCredentials } from '../utils/mocks/mockCredentialsApi';
-import { verifyUser } from '../utils/mocks/mockVerifyApi';
-import { changePassword } from '../utils/mocks/mockChangePasswordApi';
-import { confirmChangePassword } from '../utils/mocks/mockConfirmChangePasswordApi';
 import { useRouter } from 'next/router';
 
-import { buildAuthUri } from '@/helpers/buildUri';
 
 import { useSearchParams } from 'next/navigation';
 
@@ -90,12 +83,12 @@ const Cuenta = () => {
                     code,
                     client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
                     grant_type: 'authorization_code',
-                    redirect_uri: 'https://profile.tucar.dev/authenticate',
+                    // redirect_uri: 'https://profile.tucar.app/authenticate',
                     //dev
-                    // redirect_uri: 'http://localhost:3000/authenticate',
+                    redirect_uri: 'http://localhost:3000/authenticate',
                 });
 
-                const tokenResponse = await fetch('https://account-service-twvszsnmba-uc.a.run.app/api/v1/oauth/token', {
+                const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/oauth/token`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -131,7 +124,7 @@ const Cuenta = () => {
     // Función para obtener el userId
     const fetchUserId = async (acToken = null) => {
         try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/resources/token-metadata?token=${acToken ? acToken : token}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/resources/token-metadata?token=${acToken ? acToken : token}`, {
                 method: 'GET',
                 headers: {
                     "Content-Type": "application/json"
@@ -153,7 +146,7 @@ const Cuenta = () => {
     // Función para obtener los datos del usuario
     const fetchUserData = async (acToken = null) => {
         try {
-            const response = await fetch('https://account-service-1032838122231.us-central1.run.app/api/v1/users/', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -232,7 +225,7 @@ const Cuenta = () => {
     // Función para actualizar el nombre o apellido
     const updateUserCredential = async (type, value) => {
         try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/users/credentials`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/credentials`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -264,7 +257,7 @@ const Cuenta = () => {
 
     const handleSendVerificationCode = async () => {
         try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/users/credentials`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/credentials`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -303,7 +296,7 @@ const Cuenta = () => {
 
     const handleConfirmVerificationCode = async () => {
         try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/users/verify`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/verify`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -333,7 +326,7 @@ const Cuenta = () => {
 
     const handleSendVerificationCodeForEmail = async () => {
         try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/users/credentials`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/credentials`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -374,7 +367,7 @@ const Cuenta = () => {
 
     const handleConfirmVerificationCodeForEmail = async () => {
         try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/users/verify`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/verify`, {
                 method: 'PATCH',
                 headers: {
                     "Content-Type": "application/json",
@@ -403,7 +396,7 @@ const Cuenta = () => {
 
     const handleBlockAccount = async () => {
         try {
-            const response = await fetch(`https://account-service-twvszsnmba-uc.a.run.app/api/v1/users/block`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_DEV_ACCOUNT_SERVICE_URL}/api/v1/users/block`, {
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",
@@ -456,13 +449,13 @@ const Cuenta = () => {
                             className={`cursor-pointer mb-4 ${selectedSection === 'Privacy & Data' ? 'font-bold' : ''}`}
                             onClick={() => handleSectionChange('Privacy & Data')}
                         >
-                            Política de privacidad y datos
+                            Política de privacidad y datoss
                         </li>
                     </ul>
                     {/* Botón de cerrar sesión fijo en la parte inferior */}
-                    <div className="absolute bottom-0 lg:bottom-24 w-full p-5">
+                    <div className="absolute bottom-10 lg:bottom-24 w-full p-5">
                         <button
-                            onClick={() => router.push(`/logout?redirect_uri=${encodeURIComponent('https://profile.tucar.dev')}`)}
+                            onClick={() => router.push(`/logout?redirect_uri=${encodeURIComponent('https://profile.tucar.app')}`)}
                             className="flex items-center gap-2 text-red-600 font-medium hover:text-red-800"
                         >
                             <XIcon className="h-5 w-5" />
@@ -681,7 +674,7 @@ const Cuenta = () => {
                                     // Etapa inicial: Contraseña oculta y botón de edición
                                     <div className="flex justify-between items-center mb-5">
                                         <p className="text-[16px]">●●●●●●●●</p>
-                                        <a href='https://accounts.tucar.dev/change-password' target='_blank'>                                        <button
+                                        <a href='https://accounts.tucar.app/change-password' target='_blank'>                                        <button
 
                                             className="text-blue-500"
                                         >
