@@ -8,6 +8,8 @@ import { useRouter } from 'next/router';
 
 
 import { useSearchParams } from 'next/navigation';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 
 const Cuenta = () => {
@@ -83,9 +85,9 @@ const Cuenta = () => {
                     code,
                     client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
                     grant_type: 'authorization_code',
-                    redirect_uri: 'https://profile.tucar.dev/authenticate',
+                    // redirect_uri: 'https://profile.tucar.dev/authenticate',
                     //dev
-                    // redirect_uri: 'http://localhost:3000/authenticate',
+                    redirect_uri: 'http://localhost:3000/authenticate',
                 });
 
                 const tokenResponse = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/oauth/token`, {
@@ -394,7 +396,27 @@ const Cuenta = () => {
         }
     };
 
+
+
     const handleBlockAccount = async () => {
+        // SweetAlert2 para confirmar la acción
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción no se puede deshacer. ¿Deseas bloquear tu cuenta?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, bloquear cuenta',
+            cancelButtonText: 'Cancelar'
+        });
+    
+        // Si el usuario cancela, no continúa
+        if (!result.isConfirmed) {
+            Swal.fire('Cancelado', 'La cuenta no fue bloqueada.', 'info');
+            return;
+        }
+    
         try {
             const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/block`, {
                 method: 'PUT',
@@ -406,18 +428,41 @@ const Cuenta = () => {
                     userId: userId
                 })
             });
-
+    
             if (response.ok) {
                 setBlockStatus("Cuenta bloqueada correctamente.");
+                // Mensaje de éxito con cuenta regresiva antes de redirigir
+                Swal.fire({
+                    title: 'Cuenta bloqueada correctamente',
+                    text: 'Redirigiendo al inicio en 5 segundos...',
+                    icon: 'success',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    willClose: () => {
+                        // Redirige al home cuando el temporizador termina
+                        window.location.href = '/';
+                    }
+                });
             } else {
                 const errorData = await response.json();
-                setBlockStatus("Error al bloquear la cuenta: " + (errorData.detail?.errors || response.statusText));
+                const errorMessage = "Error al bloquear la cuenta: " + (errorData.detail?.errors || response.statusText);
+                setBlockStatus(errorMessage);
+                Swal.fire('Error', errorMessage, 'error'); // Notificación de error
             }
         } catch (error) {
             console.error("Error:", error);
-            setBlockStatus("Error de conexión. Inténtalo nuevamente.");
+            const connectionError = "Error de conexión. Inténtalo nuevamente.";
+            setBlockStatus(connectionError);
+            Swal.fire('Error', connectionError, 'error'); // Notificación de error de conexión
         }
     };
+
+
+    
+
+
+
 
     return (
         <div className='font-Poppins'>
@@ -664,6 +709,8 @@ const Cuenta = () => {
                                     Bloquear cuenta
                                 </button>
                             </div>
+                            
+
 
                         </div>
 
