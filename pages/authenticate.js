@@ -83,9 +83,9 @@ const Cuenta = () => {
                     code,
                     client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
                     grant_type: 'authorization_code',
-                    redirect_uri: 'https://profile.tucar.dev/authenticate',
+                    // redirect_uri: 'https://profile.tucar.dev/authenticate',
                     //dev
-                    // redirect_uri: 'http://localhost:3000/authenticate',
+                    redirect_uri: 'http://localhost:3000/authenticate',
                 });
 
                 const tokenResponse = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/oauth/token`, {
@@ -659,7 +659,14 @@ const Cuenta = () => {
                                     )}
                                 </div>
                             </div>
+                            <div className="flex justify-end mt-12 ">
+                                <button onClick={handleBlockAccount} className="px-4 py-2 text-white font-Poppins font-medium bg-red-600 hover:bg-red-700 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                    Bloquear cuenta
+                                </button>
+                            </div>
+
                         </div>
+
                     )}
 
                     {selectedSection === 'Security' && (
