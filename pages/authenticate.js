@@ -85,9 +85,9 @@ const Cuenta = () => {
                     code,
                     client_id: 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk',
                     grant_type: 'authorization_code',
-                    // redirect_uri: 'https://profile.tucar.dev/authenticate',
+                    redirect_uri: 'https://profile.tucar.dev/authenticate',
                     //dev
-                    redirect_uri: 'http://localhost:3000/authenticate',
+                    // redirect_uri: 'http://localhost:3000/authenticate',
                 });
 
                 const tokenResponse = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/oauth/token`, {
