@@ -53,11 +53,26 @@ const Cuenta = () => {
     const [isLoading, setIsLoading] = useState(true);
 
 
+    // useEffect(() => {
+    //     if (token && userData) {
+    //         window.history.replaceState(null, '', '/profile');
+    //     }
+    // }, [token, userData, verifiedStatus]);
+
     useEffect(() => {
-        if (token && userData) {
+    // Verifica si los datos están cargados
+    if (token && userData) {
+        
+        // Asegúrate de que la URL sea /profile
+        if (window.location.pathname !== '/profile') {
             window.history.replaceState(null, '', '/profile');
         }
-    }, [token, userData, verifiedStatus]);
+    } else if (!token && window.location.pathname === '/profile') {
+        // Si no hay token y estamos en /profile, redirige al inicio
+        router.push('/');
+    }
+}, [token, userData, verifiedStatus]);
+
 
 
     useEffect(() => {
@@ -257,8 +272,83 @@ const Cuenta = () => {
         }
     };
 
+    // const handleSendVerificationCode = async () => {
+    //     try {
+    //         const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/credentials`, {
+    //             method: 'PATCH',
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Authorization: `Bearer ${token}`
+    //             },
+    //             body: JSON.stringify({
+    //                 credential: {
+    //                     type: "phone",
+    //                     value: phone
+    //                 },
+    //                 userId: userId
+    //             })
+    //         });
+
+    //         if (response.ok) {
+    //             console.log("Número de teléfono actualizado correctamente.");
+    //             setIsCodeSent(true);
+    //             setPhoneError(''); // Limpiar error previo
+    //             setChangePasswordStatus("Código de verificación enviado. Revisa tu teléfono.");
+    //         } else {
+    //             const errorData = await response.json();
+    //             console.log("Error Data:", errorData); // Verificar la estructura de errorData
+
+    //             if (errorData.detail && errorData.detail.errors === "Phone already in use") {
+    //                 setPhoneError("Número de teléfono ya está en uso.");
+    //             } else {
+    //                 setPhoneError(errorData.detail?.message || "Error al enviar el código de verificación");
+    //             }
+    //             console.error("Error al actualizar el número de teléfono:", errorData);
+    //         }
+    //     } catch (error) {
+    //         setPhoneError("Error de conexión. Inténtalo nuevamente.");
+    //         console.error("Error:", error);
+    //     }
+    // };
+
+   
+
+    // const handleConfirmVerificationCode = async () => {
+    //     try {
+    //         const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/verify`, {
+    //             method: 'PATCH',
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Authorization: `Bearer ${token}`
+    //             },
+    //             body: JSON.stringify({
+    //                 credential: {
+    //                     type: "phone",
+    //                     value: verificationCode
+    //                 },
+    //                 userId: userId,
+
+    //             })
+    //         });
+    //         if (response.ok) {
+    //             console.log("Número de teléfono verificado correctamente");
+    //             setVerifiedStatus((prevStatus) => ({ ...prevStatus, phone: true }));
+    //             setIsEditingPhone(false);
+    //             setIsCodeSent(false);
+    //         } else {
+    //             console.error("Error al verificar el número de teléfono:", response.statusText);
+    //         }
+    //     } catch (error) {
+    //         console.error("Error:", error);
+    //     }
+    // };
+
     const handleSendVerificationCode = async () => {
         try {
+            // Concatenar prefijo y número al enviar
+            const fullPhoneNumber = `${phoneCode}${phone}`;
+            console.log("Enviando número completo:", fullPhoneNumber);
+    
             const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/credentials`, {
                 method: 'PATCH',
                 headers: {
@@ -268,12 +358,12 @@ const Cuenta = () => {
                 body: JSON.stringify({
                     credential: {
                         type: "phone",
-                        value: phone
+                        value: fullPhoneNumber // Usar el número completo
                     },
                     userId: userId
                 })
             });
-
+    
             if (response.ok) {
                 console.log("Número de teléfono actualizado correctamente.");
                 setIsCodeSent(true);
@@ -281,23 +371,23 @@ const Cuenta = () => {
                 setChangePasswordStatus("Código de verificación enviado. Revisa tu teléfono.");
             } else {
                 const errorData = await response.json();
-                console.log("Error Data:", errorData); // Verificar la estructura de errorData
-
                 if (errorData.detail && errorData.detail.errors === "Phone already in use") {
                     setPhoneError("Número de teléfono ya está en uso.");
                 } else {
                     setPhoneError(errorData.detail?.message || "Error al enviar el código de verificación");
                 }
-                console.error("Error al actualizar el número de teléfono:", errorData);
             }
         } catch (error) {
             setPhoneError("Error de conexión. Inténtalo nuevamente.");
             console.error("Error:", error);
         }
     };
-
+    
     const handleConfirmVerificationCode = async () => {
         try {
+            const fullPhoneNumber = `${phoneCode}${phone}`;
+            console.log("Verificando número completo:", fullPhoneNumber);
+    
             const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/verify`, {
                 method: 'PATCH',
                 headers: {
@@ -307,12 +397,12 @@ const Cuenta = () => {
                 body: JSON.stringify({
                     credential: {
                         type: "phone",
-                        value: verificationCode
+                        value: verificationCode // El código de verificación enviado por el usuario
                     },
-                    userId: userId,
-
+                    userId: userId
                 })
             });
+    
             if (response.ok) {
                 console.log("Número de teléfono verificado correctamente");
                 setVerifiedStatus((prevStatus) => ({ ...prevStatus, phone: true }));
@@ -325,6 +415,9 @@ const Cuenta = () => {
             console.error("Error:", error);
         }
     };
+    
+
+
 
     const handleSendVerificationCodeForEmail = async () => {
         try {
@@ -410,13 +503,13 @@ const Cuenta = () => {
             confirmButtonText: 'Sí, bloquear cuenta',
             cancelButtonText: 'Cancelar'
         });
-    
+
         // Si el usuario cancela, no continúa
         if (!result.isConfirmed) {
             Swal.fire('Cancelado', 'La cuenta no fue bloqueada.', 'info');
             return;
         }
-    
+
         try {
             const response = await fetch(`https://account-service-1032838122231.us-central1.run.app/api/v1/users/block`, {
                 method: 'PUT',
@@ -428,7 +521,7 @@ const Cuenta = () => {
                     userId: userId
                 })
             });
-    
+
             if (response.ok) {
                 setBlockStatus("Cuenta bloqueada correctamente.");
                 // Mensaje de éxito con cuenta regresiva antes de redirigir
@@ -459,7 +552,7 @@ const Cuenta = () => {
     };
 
 
-    
+
 
 
 
@@ -591,12 +684,16 @@ const Cuenta = () => {
                                         <div className="h-6 bg-gray-300 animate-pulse rounded w-full"></div>
                                     ) : isEditingPhone ? (
                                         <div className="flex flex-col gap-2">
+
+
                                             <InputField
                                                 type="text"
-                                                className="border border-gray-300 rounded p-2 w-full"
+                                                className="border border-gray-300 rounded-r p-2 w-full"
                                                 value={phone}
                                                 onChange={(e) => setPhone(e.target.value)}
+                                                placeholder="Ingresa tu número"
                                             />
+
                                             {isCodeSent ? (
                                                 <>
                                                     <InputField
@@ -627,6 +724,7 @@ const Cuenta = () => {
                                         </div>
                                     ) : (
                                         <>
+                                            {/* Visualización del número completo */}
                                             <p className="text-[16px]">{`${phoneCode} ${phone}`}</p>
                                             <div className="flex items-center gap-1">
                                                 {verifiedStatus.phone ? (
@@ -642,6 +740,7 @@ const Cuenta = () => {
                                     )}
                                 </div>
                             </div>
+
 
                             {/* Campo de Email */}
                             <div className="mb-5 border-b border-gray-300 pb-3">
@@ -709,7 +808,7 @@ const Cuenta = () => {
                                     Bloquear cuenta
                                 </button>
                             </div>
-                            
+
 
 
                         </div>
@@ -764,18 +863,17 @@ const Cuenta = () => {
                     )}
                     {selectedSection === 'Privacy & Data' && (
                         <div>
-                            <div className="text-[#333333] border-b border-gray-300 pb-3">
-                                <h2 className="text-2xl font-bold mb-5">Política de privacidad</h2>
-                                {allowedApplications.map((app, index) => (
-                                    <div key={index} className="mb-4">
-                                        <p className="font-medium">{app.name}</p>
-                                        <p className="text-gray-700">{app.description}</p>
-
-                                        <ul className='list-disc mx-5 my-3 flex flex-col gap-y-[5px]'>
-                                            <li>  <a href={app.privacyPolicy} target="_blank" rel="noopener noreferrer" className="underline text-[#0057b8]">
-                                                Política de Privacidad
-                                            </a>
-
+                            <h2 className="text-2xl font-bold mb-5">Política de privacidad</h2>
+                            {allowedApplications.map((app, index) => (
+                                <div key={index}>
+                                    <div className="pb-4">
+                                        <p className="font-medium text-[#333333]">{app.name}</p>
+                                        <p className="text-gray-600 text-sm">{app.description}</p>
+                                        <ul className="list-disc mx-5 my-3 flex flex-col gap-y-2">
+                                            <li>
+                                                <a href={app.privacyPolicy} target="_blank" rel="noopener noreferrer" className="underline text-[#0057b8]">
+                                                    Política de Privacidad
+                                                </a>
                                             </li>
                                             <li>
                                                 <a href={app.termsOfService} target="_blank" rel="noopener noreferrer" className="underline text-[#0057b8]">
@@ -784,9 +882,13 @@ const Cuenta = () => {
                                             </li>
                                         </ul>
                                     </div>
-                                ))}
-                            </div>
+                                    {/* Separador sutil entre apps */}
+                                    <div className="border-t border-gray-300 my-2"></div>
+                                </div>
+                            ))}
                         </div>
+
+
                     )}
 
 
