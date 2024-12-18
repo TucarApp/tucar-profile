@@ -20,7 +20,7 @@ const Cuenta = () => {
 
 
     return (
-        <Meta title='Profile'>
+        
             <div>
             <div className='w-full h-screen flex justify-center items-center'>
                 <div className="flex flex-row gap-2">
@@ -30,7 +30,7 @@ const Cuenta = () => {
                 </div>
             </div>
              </div>
-        </Meta>
+  
     );
 };
 

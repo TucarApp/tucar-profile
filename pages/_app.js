@@ -4,8 +4,7 @@ import Meta from '@/Layouts/Meta'
 
 export default function App({ Component, pageProps }) {
   return (
-    <Meta title='Profile'>
-      
+    <Meta title='Perfil'>
       <Component {...pageProps} />
     </Meta>
   )
