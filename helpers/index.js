@@ -181,7 +181,7 @@ const Auth = () => {
         params: {
           response_type: 'code',
           client_id: 'QT6xCtFyNRNPSsopvf4gbSxhPgxuzV3at4JoSg0YG7s',
-          redirect_uri: 'http://localhost:3000',
+          redirect_uri: 'https://profile.tucar.dev/authenticate',
           scope: 'driver',
           state: 'random-state',
           tenancy: 'development'

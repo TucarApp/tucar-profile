@@ -1,6 +1,6 @@
 export const fetchAccessToken = async (code) => {
     const clientId = 'E793Gjcib6yVnNpTFD0Hr3jP-Yp6gN04yzTeXGsjlgk'; // Tu client ID
-    const redirectUri = 'http://localhost:3000/authenticate'; // Redirigir a esta URI
+    const redirectUri = 'https://profile.tucar.dev/authenticate'; // Redirigir a esta URI
 
     try {
         const response = await fetch('https://account-service-twvszsnmba-uc.a.run.app/api/v1/oauth/token', {
